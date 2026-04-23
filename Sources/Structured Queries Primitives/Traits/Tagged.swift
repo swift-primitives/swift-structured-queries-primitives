@@ -1,4 +1,4 @@
-public import Identity_Primitives
+public import Tagged_Primitives
 
 extension Tagged: _OptionalPromotable where Tag: ~Copyable, RawValue: _OptionalPromotable {}
 

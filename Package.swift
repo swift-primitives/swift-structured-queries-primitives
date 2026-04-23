@@ -21,7 +21,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../swift-identity-primitives"),
+        .package(path: "../swift-tagged-primitives"),
     ],
     targets: [
 
@@ -30,7 +30,7 @@ let package = Package(
             name: "Structured Queries Primitives",
             dependencies: [
                 "Structured Queries Primitives Support",
-                .product(name: "Identity Primitives", package: "swift-identity-primitives"),
+                .product(name: "Tagged Primitives", package: "swift-tagged-primitives"),
             ],
             exclude: ["Documentation.docc"]
         ),
