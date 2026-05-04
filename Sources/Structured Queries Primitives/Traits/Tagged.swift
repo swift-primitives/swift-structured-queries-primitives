@@ -1,33 +1,33 @@
 public import Tagged_Primitives
 
-extension Tagged: _OptionalPromotable where Tag: ~Copyable, RawValue: _OptionalPromotable {}
+extension Tagged: _OptionalPromotable where Tag: ~Copyable, Underlying: _OptionalPromotable {}
 
-extension Tagged: QueryBindable where Tag: ~Copyable, RawValue: QueryBindable {
+extension Tagged: QueryBindable where Tag: ~Copyable, Underlying: QueryBindable {
     public var queryBinding: QueryBinding {
-        rawValue.queryBinding
+        underlying.queryBinding
     }
 }
 
-extension Tagged: QueryDecodable where Tag: ~Copyable, RawValue: QueryDecodable {
+extension Tagged: QueryDecodable where Tag: ~Copyable, Underlying: QueryDecodable {
     public init(decoder: inout some QueryDecoder) throws {
-        self.init(__unchecked: (), try RawValue(decoder: &decoder))
+        self.init(_unchecked: try Underlying(decoder: &decoder))
     }
 }
 
-extension Tagged: QueryExpression where Tag: ~Copyable, RawValue: QueryExpression {
+extension Tagged: QueryExpression where Tag: ~Copyable, Underlying: QueryExpression {
     public var queryFragment: QueryFragment {
-        rawValue.queryFragment
+        underlying.queryFragment
     }
 }
 
-extension Tagged: QueryRepresentable where Tag: ~Copyable, RawValue: QueryRepresentable {
-    public typealias QueryOutput = Tagged<Tag, RawValue.QueryOutput>
+extension Tagged: QueryRepresentable where Tag: ~Copyable, Underlying: QueryRepresentable {
+    public typealias QueryOutput = Tagged<Tag, Underlying.QueryOutput>
 
     public var queryOutput: QueryOutput {
-        QueryOutput(__unchecked: (), self.rawValue.queryOutput)
+        QueryOutput(_unchecked: self.underlying.queryOutput)
     }
 
     public init(queryOutput: QueryOutput) {
-        self.init(__unchecked: (), RawValue(queryOutput: queryOutput.rawValue))
+        self.init(_unchecked: Underlying(queryOutput: queryOutput.underlying))
     }
 }
