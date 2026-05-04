@@ -137,8 +137,7 @@ public enum InsertValuesBuilder<Value> {
         component
     }
 
-    public static func buildLimitedAvailability(_ component: [[QueryFragment]]) -> [[QueryFragment]]
-    {
+    public static func buildLimitedAvailability(_ component: [[QueryFragment]]) -> [[QueryFragment]] {
         component
     }
 

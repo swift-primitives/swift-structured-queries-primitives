@@ -143,8 +143,7 @@ public enum SeedsBuilder {
         first
     }
 
-    public static func buildPartialBlock(accumulated: [any Table], next: [any Table]) -> [any Table]
-    {
+    public static func buildPartialBlock(accumulated: [any Table], next: [any Table]) -> [any Table] {
         accumulated + next
     }
 }

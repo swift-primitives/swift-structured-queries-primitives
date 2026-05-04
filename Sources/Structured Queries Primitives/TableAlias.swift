@@ -80,8 +80,7 @@ extension Table {
     ///
     /// - Parameter aliasName: An alias name for this table.
     /// - Returns: A table alias of this table type.
-    public static func `as`<Name: AliasName>(_ aliasName: Name.Type) -> TableAlias<Self, Name>.Type
-    {
+    public static func `as`<Name: AliasName>(_ aliasName: Name.Type) -> TableAlias<Self, Name>.Type {
         TableAlias.self
     }
 }
@@ -349,7 +348,8 @@ extension TableAlias: Encodable where Base: Encodable {
 
 extension QueryFragment {
     fileprivate func replacingOccurrences<T: Table, A: AliasName>(
-        of _: T.Type, with _: A.Type
+        of _: T.Type,
+        with _: A.Type
     ) -> QueryFragment {
         var query = self
         for index in query.segments.indices {
