@@ -27,11 +27,6 @@ jobs:
   docs:
     uses: swift-institute/.github/.github/workflows/swift-docs.yml@main
     with:
-      umbrella-module: Structured_Queries_Primitives
-      umbrella-display-name: "Structured Queries Primitives"
-      umbrella-bundle-id: "swift-structured-queries-primitives.Structured-Queries-Primitives"
-      umbrella-docc-path: "Sources/Structured Queries Primitives/Structured Queries Primitives.docc"
-      exclude-modules: ""
       enable-private-repos: true
     secrets:
       PRIVATE_REPO_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
