@@ -19,6 +19,10 @@ let package = Package(
             name: "Structured Queries Primitives Support",
             targets: ["Structured Queries Primitives Support"]
         ),
+        .library(
+            name: "Structured Queries Primitives Test Support",
+            targets: ["Structured Queries Primitives Test Support"]
+        ),
     ],
     dependencies: [
         .package(path: "../swift-tagged-primitives"),
@@ -42,10 +46,19 @@ let package = Package(
         ),
 
         // MARK: - Tests
+        .target(
+            name: "Structured Queries Primitives Test Support",
+            dependencies: [
+                "Structured Queries Primitives",
+                .product(name: "Tagged Primitives Test Support", package: "swift-tagged-primitives"),
+            ],
+            path: "Tests/Support"
+        ),
         .testTarget(
             name: "Structured Queries Primitives Tests",
             dependencies: [
                 "Structured Queries Primitives",
+                "Structured Queries Primitives Test Support",
             ]
         ),
     ],
