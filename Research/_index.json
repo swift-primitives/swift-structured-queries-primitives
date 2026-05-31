@@ -5,17 +5,5 @@
   "title": "Research Index: swift-structured-queries-primitives",
   "blurb": "",
   "scope": "swift-structured-queries-primitives (swift-primitives)",
-  "documents": [
-    {
-      "file": "audit.md",
-      "displayName": "audit.md",
-      "topic": "Migration plan deviations audit — Phase 1 coenttb → Swift Institute",
-      "date": "2026-03-27",
-      "status": "ACTIVE",
-      "statusDetail": null,
-      "statusRaw": "ACTIVE",
-      "tier": null,
-      "scope": null
-    }
-  ]
+  "documents": []
 }
