@@ -1,6 +1,6 @@
 # .github/metadata.yaml
 # Triaged by AI-assisted bulk pass (2026-04-29).
-description: "Structured queries types for Swift."
+description: "Type-safe, composable SQL query building that mirrors the generated SQL, with select/insert/update/delete statements and safe raw-SQL escapes, for Swift."
 topics:
   - primitives
   - structured
