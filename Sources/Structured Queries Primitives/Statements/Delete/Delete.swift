@@ -15,8 +15,10 @@ public struct Delete<From: Table, Returning>: Sendable {
 public typealias DeleteOf<From: Table> = Delete<From, ()>
 
 extension Delete: Statement {
+    /// The query value type produced by this delete's RETURNING clause.
     public typealias QueryValue = Returning
 
+    /// The complete SQL text for this DELETE statement.
     public var query: QueryFragment {
         guard !isEmpty else { return "" }
         var query: QueryFragment = "DELETE FROM "

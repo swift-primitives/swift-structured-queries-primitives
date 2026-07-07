@@ -5,6 +5,7 @@ import Structured_Queries_Primitives_Support
 /// Values of this type are supplied to ``QueryExpression/collate(_:)`` to describe how a string
 /// should be compared in a query.
 public struct Collation: QueryExpression, Sendable {
+    /// The query value type for this expression, which never produces a result.
     public typealias QueryValue = Never
 
     /// Initializes a collating sequence name from a query fragment.
@@ -24,5 +25,6 @@ public struct Collation: QueryExpression, Sendable {
         self.queryFragment = "\(quote: rawValue)"
     }
 
+    /// The quoted SQL fragment naming this collating sequence.
     public let queryFragment: QueryFragment
 }

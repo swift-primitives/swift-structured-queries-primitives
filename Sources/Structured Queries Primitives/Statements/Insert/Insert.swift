@@ -19,6 +19,7 @@ private func isNullBinding(_ fragment: QueryFragment) -> Bool {
     return false
 }
 
+/// The values clause of an insert statement, either default, explicit rows, or a subquery.
 public enum InsertValues: Sendable {
     case `default`
     case values([[QueryFragment]])
@@ -118,9 +119,12 @@ public struct Insert<Into: Table, Returning>: Sendable {
 }
 
 extension Insert: Statement {
+    /// The query value type produced by this insert statement, its `Returning` type.
     public typealias QueryValue = Returning
+    /// The table this insert statement targets, its `Into` type.
     public typealias From = Into
 
+    /// The complete SQL query fragment for this insert statement.
     public var query: QueryFragment {
         var query: QueryFragment = "INSERT"
         query.append(" INTO ")

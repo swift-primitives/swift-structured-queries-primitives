@@ -45,12 +45,14 @@ public enum QueryBinding: Hashable, Sendable {
     case dateArray([Date])
 
     /// A generic array case for any QueryBindable element type that doesn't have a specific case.
+    ///
     /// Elements are converted to their individual QueryBindings.
     case genericArray([QueryBinding])
 
     /// An error describing why a value cannot be bound to a statement.
     case invalid(QueryBindingError)
 
+    /// Wraps an arbitrary error as an invalid query binding.
     @_disfavoredOverload
     public static func invalid(_ error: any Swift.Error) -> Self {
         .invalid(QueryBindingError(underlyingError: error))
@@ -59,15 +61,20 @@ public enum QueryBinding: Hashable, Sendable {
 
 /// A type that wraps errors encountered when trying to bind a value to a statement.
 public struct QueryBindingError: Swift.Error, Hashable {
+    /// The underlying error that caused the binding failure.
     public let underlyingError: any Swift.Error
+    /// Creates a `QueryBindingError` wrapping the given underlying error.
     public init(underlyingError: any Swift.Error) {
         self.underlyingError = underlyingError
     }
+    /// Always returns `true`, since `QueryBindingError` values are not meaningfully comparable.
     public static func == (lhs: Self, rhs: Self) -> Bool { true }
+    /// No-op hash implementation, since all `QueryBindingError` values are considered equal.
     public func hash(into hasher: inout Hasher) {}
 }
 
 extension QueryBinding: CustomDebugStringConvertible {
+    /// A human-readable SQL literal representation of this binding's value.
     public var debugDescription: String {
         switch self {
         case .blob(let data):

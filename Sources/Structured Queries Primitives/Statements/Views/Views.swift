@@ -25,7 +25,9 @@ extension Table {
 /// To learn more, see <doc:Views>.
 public struct TemporaryView<View: Table, Selection: PartialSelectStatement>: Statement
 where Selection.QueryValue == View {
+    /// The query value type for a `CREATE TEMPORARY VIEW` statement, which produces no value.
     public typealias QueryValue = ()
+    /// The `From` type for a `CREATE TEMPORARY VIEW` statement, which selects from no table.
     public typealias From = Never
 
     fileprivate let orReplace: Bool
@@ -48,6 +50,7 @@ where Selection.QueryValue == View {
         return SQLQueryExpression(query)
     }
 
+    /// The `CREATE TEMPORARY VIEW` query fragment for this statement.
     public var query: QueryFragment {
         var query: QueryFragment = "CREATE"
         if orReplace {

@@ -95,6 +95,7 @@ extension QueryDecoder {
         try (repeat (each T)(decoder: &self).queryOutput)
     }
 
+    /// Decodes a single self-representing value starting from the current column.
     @inlinable
     @inline(__always)
     public mutating func decode<T: QueryRepresentable<T>>(
@@ -104,6 +105,7 @@ extension QueryDecoder {
     }
 }
 
+/// The errors that can occur when decoding a query result column.
 public enum QueryDecodingError: Swift.Error {
     case missingRequiredColumn
 }

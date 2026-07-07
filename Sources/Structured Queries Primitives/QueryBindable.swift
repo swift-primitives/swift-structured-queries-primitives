@@ -12,6 +12,7 @@ public protocol QueryBindable: QueryRepresentable, QueryExpression where QueryVa
 }
 
 extension QueryBindable {
+    /// The query fragment produced by binding this value as a parameter.
     public var queryFragment: QueryFragment { "\(queryBinding)" }
 }
 
@@ -19,58 +20,72 @@ extension QueryBindable {
 // is in StructuredQueriesPostgres/Types/Array/PostgresArray.swift
 
 extension Bool: QueryBindable {
+    /// The query binding representing this Boolean value.
     public var queryBinding: QueryBinding { .bool(self) }
 }
 
 extension Double: QueryBindable {
+    /// The query binding representing this double-precision floating-point value.
     public var queryBinding: QueryBinding { .double(self) }
 }
 
 extension Date: QueryBindable {
+    /// The query binding representing this date value.
     public var queryBinding: QueryBinding { .date(self) }
 }
 
 extension Float: QueryBindable {
+    /// The query binding representing this floating-point value.
     public var queryBinding: QueryBinding { .double(Double(self)) }
 }
 
 extension Int: QueryBindable {
+    /// The query binding representing this integer value.
     public var queryBinding: QueryBinding { .int(Int64(self)) }
 }
 
 extension Int8: QueryBindable {
+    /// The query binding representing this 8-bit integer value.
     public var queryBinding: QueryBinding { .int(Int64(self)) }
 }
 
 extension Int16: QueryBindable {
+    /// The query binding representing this 16-bit integer value.
     public var queryBinding: QueryBinding { .int(Int64(self)) }
 }
 
 extension Int32: QueryBindable {
+    /// The query binding representing this 32-bit integer value.
     public var queryBinding: QueryBinding { .int(Int64(self)) }
 }
 
 extension Int64: QueryBindable {
+    /// The query binding representing this 64-bit integer value.
     public var queryBinding: QueryBinding { .int(self) }
 }
 
 extension String: QueryBindable {
+    /// The query binding representing this string value.
     public var queryBinding: QueryBinding { .text(self) }
 }
 
 extension UInt8: QueryBindable {
+    /// The query binding representing this unsigned 8-bit integer value.
     public var queryBinding: QueryBinding { .int(Int64(self)) }
 }
 
 extension UInt16: QueryBindable {
+    /// The query binding representing this unsigned 16-bit integer value.
     public var queryBinding: QueryBinding { .int(Int64(self)) }
 }
 
 extension UInt32: QueryBindable {
+    /// The query binding representing this unsigned 32-bit integer value.
     public var queryBinding: QueryBinding { .int(Int64(self)) }
 }
 
 extension UInt64: QueryBindable {
+    /// The query binding representing this unsigned 64-bit integer value, or an overflow error.
     public var queryBinding: QueryBinding {
         if self > UInt64(Int64.max) {
             return .invalid(OverflowError())
@@ -81,14 +96,17 @@ extension UInt64: QueryBindable {
 }
 
 extension UUID: QueryBindable {
+    /// The query binding representing this UUID value.
     public var queryBinding: QueryBinding { .uuid(self) }
 }
 
 extension Decimal: QueryBindable {
+    /// The query binding representing this decimal value.
     public var queryBinding: QueryBinding { .decimal(self) }
 }
 
 extension DefaultStringInterpolation {
+    /// Appends a debug description of the given SQL expression to this string interpolation.
     @_disfavoredOverload
     @available(
         *,
@@ -102,6 +120,7 @@ extension DefaultStringInterpolation {
         self.appendInterpolation(value as Any)
     }
 
+    /// Appends a debug description of the given table column to this string interpolation.
     @available(
         *,
         deprecated,
@@ -116,9 +135,11 @@ extension DefaultStringInterpolation {
 }
 
 extension QueryBindable where Self: LosslessStringConvertible {
+    /// The query binding derived from this value's lossless string description.
     public var queryBinding: QueryBinding { description.queryBinding }
 }
 
 extension QueryBindable where Self: RawRepresentable, RawValue: QueryBindable {
+    /// The query binding derived from this value's raw representable value.
     public var queryBinding: QueryBinding { rawValue.queryBinding }
 }

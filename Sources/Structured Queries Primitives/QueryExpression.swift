@@ -16,10 +16,12 @@ public protocol QueryExpression<QueryValue> {
 }
 
 extension QueryExpression {
+    /// The default column width of one, used when not overridden.
     public static var _columnWidth: Int {
         1
     }
 
+    /// The default column list, containing only this expression.
     public var _allColumns: [any QueryExpression] {
         [self]
     }

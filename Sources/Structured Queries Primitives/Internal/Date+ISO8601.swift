@@ -1,6 +1,7 @@
 public import Foundation
 
 extension Date {
+    /// This date formatted as an ISO-8601 string.
     public var iso8601String: String {
         if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
             return formatted(.iso8601.currentTimestamp(includingFractionalSeconds: true))
@@ -35,6 +36,7 @@ extension DateFormatter {
 }
 
 extension Date {
+    /// Creates a date by parsing the given ISO-8601 string.
     public init(iso8601String: String) throws {
         if #available(iOS 15, macOS 12, tvOS 15, watchOS 8, *) {
             do {

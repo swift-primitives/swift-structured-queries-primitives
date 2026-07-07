@@ -76,12 +76,14 @@ extension Select {
         return select
     }
 
+    /// Combines this select's `WHERE` clause with another using logical AND.
     public func and(_ other: Where<From>) -> Self {
         var select = self
         select.where = (select.where + other.predicates).removingDuplicates()
         return select
     }
 
+    /// Combines this select's `WHERE` clause with another using logical OR.
     public func or(_ other: Where<From>) -> Self {
         var select = self
         if select.where.isEmpty {

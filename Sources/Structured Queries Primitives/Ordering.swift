@@ -24,8 +24,10 @@ public struct NullOrdering: RawRepresentable, Sendable {
     /// A null ordering of `NULLS LAST`.
     public static let last = Self(rawValue: "LAST")
 
+    /// The raw SQL keyword for this null ordering.
     public let rawValue: QueryFragment
 
+    /// Creates a null ordering from the given raw SQL keyword.
     public init(rawValue: QueryFragment) {
         self.rawValue = rawValue
     }

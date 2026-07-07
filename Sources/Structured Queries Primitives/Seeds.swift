@@ -71,13 +71,16 @@ public struct Seeds: Sequence {
         self.seeds = build()
     }
 
+    /// Creates an iterator over the batched insert statements for this seed sequence.
     public func makeIterator() -> Iterator {
         Iterator(seeds: seeds)
     }
 
+    /// An iterator that produces batched insert statements for ``Seeds``.
     public struct Iterator: IteratorProtocol {
         var seeds: [any Table]
 
+        /// Returns the next batched insert statement for a run of same-type seed rows.
         public mutating func next() -> SQLQueryExpression<Void>? {
             guard let first = seeds.first else { return nil }
 
@@ -104,45 +107,56 @@ public struct Seeds: Sequence {
     }
 }
 
+/// A result builder that composes tables into a flat array for ``Seeds``.
 @resultBuilder
 public enum SeedsBuilder {
+    /// Flattens arrays of table arrays produced by a `for` loop into a single array.
     public static func buildArray(_ components: [[any Table]]) -> [any Table] {
         components.flatMap(\.self)
     }
 
+    /// Returns the given array of tables as the result of a builder block.
     public static func buildBlock(_ components: [any Table]) -> [any Table] {
         components
     }
 
+    /// Returns the first branch's table array in an `if`/`else` result builder block.
     public static func buildEither(first component: [any Table]) -> [any Table] {
         component
     }
 
+    /// Returns the second branch's table array in an `if`/`else` result builder block.
     public static func buildEither(second component: [any Table]) -> [any Table] {
         component
     }
 
+    /// Wraps a single table value in an array for the result builder.
     public static func buildExpression(_ expression: some Table) -> [any Table] {
         [expression]
     }
 
+    /// Returns an existing array of tables as a result builder expression.
     public static func buildExpression(_ expression: [any Table]) -> [any Table] {
         expression
     }
 
+    /// Passes through a table array component from a limited-availability branch.
     public static func buildLimitedAvailability(_ component: [any Table]) -> [any Table] {
         component
     }
 
     // swiftlint:disable:next discouraged_optional_collection
+    /// Returns the optional table array component, or an empty array if absent.
     public static func buildOptional(_ component: [any Table]?) -> [any Table] {
         component ?? []
     }
 
+    /// Returns the first table array component of a partial result builder block.
     public static func buildPartialBlock(first: [any Table]) -> [any Table] {
         first
     }
 
+    /// Combines the accumulated table array with the next result builder component.
     public static func buildPartialBlock(accumulated: [any Table], next: [any Table]) -> [any Table] {
         accumulated + next
     }

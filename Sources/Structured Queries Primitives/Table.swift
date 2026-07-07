@@ -62,6 +62,7 @@ public protocol Table: QueryRepresentable, PartialSelectStatement {
 }
 
 // NB: Distinguishes `@Selection` from `@Table`.
+/// A marker protocol distinguishing `@Selection`-generated types from `@Table` types.
 public protocol _Selection: Table {}
 
 extension Table {
@@ -104,18 +105,22 @@ extension Table {
         Where(scope: .empty)
     }
 
+    /// The default table alias, `nil`, for tables that are not aliased.
     public static var tableAlias: String? {
         nil
     }
 
+    /// The default schema name, `nil`, for tables without an explicit schema.
     public static var schemaName: String? {
         nil
     }
 
+    /// The default query fragment for the table, the table's name quoted.
     public static var tableFragment: QueryFragment {
         QueryFragment(quote: tableName)
     }
 
+    /// A `SELECT` fragment projecting this instance's values aliased to their column names.
     public var query: QueryFragment {
         func open<Root, Value>(_ column: some TableColumnExpression<Root, Value>) -> QueryFragment {
             let value = Value(queryOutput: (self as! Root)[keyPath: column.keyPath])
@@ -124,6 +129,7 @@ extension Table {
         return "SELECT \(TableColumns.allColumns.map { open($0) }.joined(separator: ", "))"
     }
 
+    /// A query fragment listing this instance's column values as a comma-separated list.
     public var queryFragment: QueryFragment {
         func open<Root, Value>(_ column: some TableColumnExpression<Root, Value>) -> QueryFragment {
             Value(queryOutput: (self as! Root)[keyPath: column.keyPath]).queryFragment
@@ -148,6 +154,7 @@ extension Table {
 }
 
 extension Table where DefaultScope == Where<Self> {
+    /// The default unscoped select statement used when no custom scope is defined.
     public static var all: DefaultScope {
         Where()
     }

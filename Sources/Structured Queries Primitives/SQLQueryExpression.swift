@@ -3,10 +3,13 @@
 /// It is not common to interact with this type directly. A value of this type is returned from the
 /// `#sql` macro. See <doc:SafeSQLStrings> for more information.
 public struct SQLQueryExpression<QueryValue>: Sendable, Statement {
+    /// The From clause type, unused since this expression wraps raw SQL.
     public typealias From = Never
 
+    /// The raw SQL fragment wrapped by this expression.
     public let queryFragment: QueryFragment
 
+    /// The query text for this expression, equal to its wrapped SQL fragment.
     public var query: QueryFragment { queryFragment }
 
     /// Creates a query expression from a raw SQL fragment.

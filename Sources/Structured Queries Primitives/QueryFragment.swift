@@ -85,6 +85,7 @@ public struct QueryFragment: Hashable, Sendable {
 }
 
 extension QueryFragment: CustomDebugStringConvertible {
+    /// A textual representation of this query fragment, suitable for debugging.
     public var debugDescription: String {
         segments.reduce(into: "") { debugDescription, segment in
             switch segment {
@@ -115,10 +116,12 @@ extension [QueryFragment] {
 }
 
 extension QueryFragment: ExpressibleByStringInterpolation {
+    /// Creates a query fragment from the given string interpolation.
     public init(stringInterpolation: StringInterpolation) {
         self.init(segments: stringInterpolation.segments)
     }
 
+    /// Creates a query fragment from the given string literal.
     public init(stringLiteral value: String) {
         self.init(value)
     }
@@ -144,13 +147,16 @@ extension QueryFragment: ExpressibleByStringInterpolation {
         self.init(sql.quoted(delimiter))
     }
 
+    /// A type for building a query fragment from a string interpolation.
     public struct StringInterpolation: StringInterpolationProtocol {
         fileprivate var segments: [Segment] = []
 
+        /// Creates a string interpolation with the given literal and interpolation capacities.
         public init(literalCapacity: Int, interpolationCount: Int) {
             segments.reserveCapacity(interpolationCount)
         }
 
+        /// Appends the given literal SQL string to the interpolation.
         public mutating func appendLiteral(_ literal: String) {
             guard !literal.isEmpty else { return }
             segments.append(.sql(literal))
@@ -302,6 +308,7 @@ extension QueryFragment: ExpressibleByStringInterpolation {
             }
         }
 
+        /// Appends a string to the interpolation, binding it as a value.
         @available(
             *,
             deprecated,

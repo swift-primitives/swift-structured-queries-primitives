@@ -11,6 +11,7 @@ public protocol Statement<QueryValue>: QueryExpression {
 }
 
 extension Statement {
+    /// The SQL fragment for this statement, wrapped in parentheses as a subquery.
     public var queryFragment: QueryFragment {
         "(\(.newline)\(query.indented())\(.newline))"
     }

@@ -5,6 +5,7 @@ extension CTE {
     /// any number of common table expressions into a `WITH` statement.
     @resultBuilder
     public enum Builder {
+        /// Converts a select statement into a common table expression clause.
         public static func buildExpression<CTETable: Table>(
             _ expression: some PartialSelectStatement<CTETable>
         ) -> Clause {
@@ -15,18 +16,21 @@ extension CTE {
             )
         }
 
+        /// Builds a block containing a single common table expression clause.
         public static func buildBlock(
             _ component: Clause
         ) -> [Clause] {
             [component]
         }
 
+        /// Builds the initial partial block from the first common table expression clause.
         public static func buildPartialBlock(
             first: Clause
         ) -> [Clause] {
             [first]
         }
 
+        /// Appends the next clause to an accumulated block of common table expressions.
         public static func buildPartialBlock(
             accumulated: [Clause],
             next: Clause

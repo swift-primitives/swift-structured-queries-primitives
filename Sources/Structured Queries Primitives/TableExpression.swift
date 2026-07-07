@@ -9,6 +9,7 @@ public protocol TableExpression<QueryValue>: QueryExpression where QueryValue: T
 }
 
 extension TableExpression {
+    /// The SQL fragment listing this expression's columns, aliased when selecting.
     public var queryFragment: QueryFragment {
         if _isSelecting {
             return zip(allColumns, QueryValue.TableColumns.allColumns)
@@ -19,15 +20,18 @@ extension TableExpression {
         }
     }
 
+    /// The number of columns in this table's expression, forwarded from its query value type.
     public static var _columnWidth: Int {
         QueryValue._columnWidth
     }
 
+    /// This expression's full list of columns, exposed for internal use.
     public var _allColumns: [any QueryExpression] {
         allColumns
     }
 }
 
 extension Table {
+    /// A convenience alias for a table's column-selection type.
     public typealias Columns = Selection
 }

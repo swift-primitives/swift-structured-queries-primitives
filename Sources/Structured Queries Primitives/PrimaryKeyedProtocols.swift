@@ -13,7 +13,7 @@ where TableColumns: PrimaryKeyedTableDefinition<PrimaryKey> {
     associatedtype Draft: TableDraft where Draft.PrimaryTable == Self
 }
 
-// A type representing a draft to be saved to a table with a primary key.
+/// A type representing a draft to be saved to a table with a primary key.
 public protocol TableDraft: Table {
     /// A type that represents the table with a primary key.
     associatedtype PrimaryTable: PrimaryKeyedTable where PrimaryTable.Draft == Self
@@ -25,18 +25,21 @@ public protocol TableDraft: Table {
 }
 
 extension TableDraft {
+    /// Forwards a primary table's statement to this draft type.
     public static subscript(
         dynamicMember keyPath: KeyPath<PrimaryTable.Type, some Statement<PrimaryTable>>
     ) -> some Statement<Self> {
         SQLQueryExpression("\(PrimaryTable.self[keyPath: keyPath])")
     }
 
+    /// Forwards a primary table's select statement to this draft type.
     public static subscript(
         dynamicMember keyPath: KeyPath<PrimaryTable.Type, some SelectStatementOf<PrimaryTable>>
     ) -> SelectOf<Self> {
         unsafeBitCast(PrimaryTable.self[keyPath: keyPath].asSelect(), to: SelectOf<Self>.self)
     }
 
+    /// A select statement over all rows of this draft's primary table.
     public static var all: SelectOf<Self> {
         unsafeBitCast(PrimaryTable.all.asSelect(), to: SelectOf<Self>.self)
     }
@@ -61,6 +64,7 @@ where QueryValue: PrimaryKeyedTable {
 }
 
 extension TableDefinition where QueryValue: TableDraft {
+    /// Forwards column access to this draft's primary table definition.
     public subscript<Member>(
         dynamicMember keyPath: KeyPath<QueryValue.PrimaryTable.TableColumns, Member>
     ) -> Member {

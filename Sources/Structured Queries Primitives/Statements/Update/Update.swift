@@ -17,8 +17,10 @@ public struct Update<From: Table, Returning>: Sendable {
 public typealias UpdateOf<Base: Table> = Update<Base, ()>
 
 extension Update: Statement {
+    /// The query value type produced by this update's RETURNING clause.
     public typealias QueryValue = Returning
 
+    /// The complete SQL text for this UPDATE statement.
     public var query: QueryFragment {
         guard !isEmpty, !updates.isEmpty
         else { return "" }

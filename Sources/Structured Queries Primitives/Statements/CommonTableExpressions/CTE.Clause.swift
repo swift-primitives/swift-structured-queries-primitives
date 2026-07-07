@@ -4,12 +4,14 @@ import Structured_Queries_Primitives_Support
 extension CTE {
     /// A single common table expression clause.
     public struct Clause: QueryExpression, Sendable {
+        /// The query value type for this clause, which produces no result.
         public typealias QueryValue = ()
 
         let tableName: QueryFragment
         let select: QueryFragment
         let materialization: MaterializationHint?
 
+        /// Creates a common table expression clause from a table name and select query.
         public init(
             tableName: QueryFragment,
             select: QueryFragment,
@@ -20,6 +22,7 @@ extension CTE {
             self.materialization = materialization
         }
 
+        /// The SQL fragment defining this CTE, including its materialization hint.
         public var queryFragment: QueryFragment {
             guard !select.isEmpty else { return "" }
 

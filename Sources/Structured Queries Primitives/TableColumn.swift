@@ -1,5 +1,6 @@
 import Structured_Queries_Primitives_Support
 
+/// The underlying requirements shared by all table column expressions.
 public protocol _TableColumnExpression<Root, Value>: QueryExpression where Value == QueryValue {
     associatedtype Root: Table
     associatedtype Value: QueryRepresentable
@@ -28,6 +29,7 @@ where Value: QueryBindable {
 }
 
 extension TableColumnExpression {
+    /// The column's name wrapped in a single-element array, satisfying the `_names` requirement.
     public var _names: [String] { [name] }
 }
 
@@ -39,6 +41,7 @@ public protocol WritableTableColumnExpression<Root, Value>: TableColumnExpressio
 }
 
 extension WritableTableColumnExpression {
+    /// Returns this writable column aliased and erased to a read-only table column expression.
     public func _aliased<Name: AliasName>(
         _ alias: Name.Type
     ) -> any TableColumnExpression<TableAlias<Root, Name>, Value> {
@@ -53,14 +56,19 @@ extension WritableTableColumnExpression {
 public struct TableColumn<Root: Table, Value: QueryRepresentable & QueryBindable>:
     WritableTableColumnExpression
 {
+    /// The query value type produced by this table column.
     public typealias QueryValue = Value
 
+    /// The name of the table column.
     public let name: String
 
+    /// The default value of the table column.
     public let defaultValue: Value.QueryOutput?
 
+    /// The table model key path associated with this table column.
     public let keyPath: KeyPath<Root, Value.QueryOutput>
 
+    /// Creates a table column with the given name, key path, and optional default value.
     public init(
         _ name: String,
         keyPath: KeyPath<Root, Value.QueryOutput>,
@@ -71,6 +79,7 @@ public struct TableColumn<Root: Table, Value: QueryRepresentable & QueryBindable
         self.keyPath = keyPath
     }
 
+    /// Creates a table column with the given name, key path, and optional default value.
     public init(
         _ name: String,
         keyPath: KeyPath<Root, Value>,
@@ -81,14 +90,17 @@ public struct TableColumn<Root: Table, Value: QueryRepresentable & QueryBindable
         self.keyPath = keyPath
     }
 
+    /// Decodes this table column's value from the given query decoder.
     public func decode(_ decoder: inout some QueryDecoder) throws -> Value.QueryOutput {
         try Value(decoder: &decoder).queryOutput
     }
 
+    /// The SQL fragment referencing this column, qualified by its table.
     public var queryFragment: QueryFragment {
         "\(Root.self).\(quote: name)"
     }
 
+    /// Returns this column aliased to the given table alias name.
     public func _aliased<Name>(
         _ alias: Name.Type
     ) -> any WritableTableColumnExpression<TableAlias<Root, Name>, Value> {
@@ -98,12 +110,16 @@ public struct TableColumn<Root: Table, Value: QueryRepresentable & QueryBindable
         )
     }
 
+    /// This column wrapped in a single-element array of all columns.
     public var _allColumns: [any TableColumnExpression] { [self] }
 
+    /// This column wrapped in a single-element array of writable columns.
     public var _writableColumns: [any WritableTableColumnExpression] { [self] }
 }
 
+/// A namespace of factory methods for constructing table columns and column groups.
 public enum _TableColumn<Root: Table, Value: QueryRepresentable> {
+    /// Creates a table column for the given name, key path, and default value.
     public static func `for`(
         _ name: String,
         keyPath: KeyPath<Root, Value.QueryOutput>,
@@ -113,6 +129,7 @@ public enum _TableColumn<Root: Table, Value: QueryRepresentable> {
         TableColumn(name, keyPath: keyPath, default: defaultValue)
     }
 
+    /// Creates a table column for the given name, key path, and default value.
     public static func `for`(
         _ name: String,
         keyPath: KeyPath<Root, Value>,
@@ -122,6 +139,7 @@ public enum _TableColumn<Root: Table, Value: QueryRepresentable> {
         TableColumn(name, keyPath: keyPath, default: defaultValue)
     }
 
+    /// Creates a column group for the given key path to a nested table value.
     public static func `for`(
         _: String,
         keyPath: KeyPath<Root, Value>,
@@ -151,14 +169,19 @@ public enum GeneratedColumnStorage {
 public struct GeneratedColumn<Root: Table, Value: QueryRepresentable & QueryBindable>:
     TableColumnExpression
 {
+    /// The query value type produced by this generated column.
     public typealias QueryValue = Value
 
+    /// The name of the generated column.
     public let name: String
 
+    /// The default value of the generated column.
     public let defaultValue: Value.QueryOutput?
 
+    /// The table model key path associated with this generated column.
     public let keyPath: KeyPath<Root, Value.QueryOutput>
 
+    /// Creates a generated column with the given name, key path, and optional default value.
     public init(
         _ name: String,
         keyPath: KeyPath<Root, Value.QueryOutput>,
@@ -169,6 +192,7 @@ public struct GeneratedColumn<Root: Table, Value: QueryRepresentable & QueryBind
         self.keyPath = keyPath
     }
 
+    /// Creates a generated column with the given name, key path, and optional default value.
     public init(
         _ name: String,
         keyPath: KeyPath<Root, Value.QueryOutput>,
@@ -179,14 +203,17 @@ public struct GeneratedColumn<Root: Table, Value: QueryRepresentable & QueryBind
         self.keyPath = keyPath
     }
 
+    /// Decodes this generated column's value from the given query decoder.
     public func decode(_ decoder: inout some QueryDecoder) throws -> Value.QueryOutput {
         try Value(decoder: &decoder).queryOutput
     }
 
+    /// The SQL fragment referencing this generated column, qualified by its table.
     public var queryFragment: QueryFragment {
         "\(Root.self).\(quote: name)"
     }
 
+    /// Returns this generated column aliased to the given table alias name.
     public func _aliased<Name>(
         _ alias: Name.Type
     ) -> any TableColumnExpression<TableAlias<Root, Name>, Value> {
@@ -196,5 +223,6 @@ public struct GeneratedColumn<Root: Table, Value: QueryRepresentable & QueryBind
         )
     }
 
+    /// This generated column wrapped in a single-element array of all columns.
     public var _allColumns: [any TableColumnExpression] { [self] }
 }

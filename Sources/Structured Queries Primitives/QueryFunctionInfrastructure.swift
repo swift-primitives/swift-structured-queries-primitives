@@ -16,6 +16,7 @@ public struct QueryFunction<QueryValue>: QueryExpression {
     let name: QueryFragment
     let arguments: [QueryFragment]
 
+    /// Creates a query function expression with the given name and arguments.
     public init<each Argument: QueryExpression>(
         _ name: QueryFragment,
         _ arguments: repeat each Argument
@@ -24,6 +25,7 @@ public struct QueryFunction<QueryValue>: QueryExpression {
         self.arguments = Array(repeat each arguments)
     }
 
+    /// The SQL fragment calling this function with its arguments.
     public var queryFragment: QueryFragment {
         "\(name)(\(arguments.joined(separator: ", ")))"
     }

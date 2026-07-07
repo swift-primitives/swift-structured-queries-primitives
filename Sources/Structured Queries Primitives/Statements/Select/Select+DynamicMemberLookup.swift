@@ -2,6 +2,7 @@
     // NB: Using a parameter pack in the dynamic member results in 'EXC_BAD_ACCESS'.
     //     These overloads work around the problem.
     extension Select {
+        /// Appends the columns and joins at the given key path to this select statement.
         public subscript<
             each C: QueryRepresentable,
             each J: Table,
@@ -13,6 +14,7 @@
             self + From.self[keyPath: keyPath]
         }
 
+        /// Appends the columns and joins at the given key path to this select statement.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -24,6 +26,7 @@
             self + From.self[keyPath: keyPath]
         }
 
+        /// Appends the columns and joins at the given key path to this select statement.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -36,6 +39,7 @@
             self + From.self[keyPath: keyPath]
         }
 
+        /// Appends the columns and joins at the given key path to this select statement.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -49,6 +53,7 @@
             self + From.self[keyPath: keyPath]
         }
 
+        /// Appends the columns and joins at the given key path to this select statement.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -63,6 +68,7 @@
             self + From.self[keyPath: keyPath]
         }
 
+        /// Appends the columns and joins at the given key path to this select statement.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -75,6 +81,7 @@
             self + From.self[keyPath: keyPath]
         }
 
+        /// Appends the columns and joins at the given key path to this select statement.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -88,6 +95,7 @@
             self + From.self[keyPath: keyPath]
         }
 
+        /// Appends the columns and joins at the given key path to this select statement.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -102,6 +110,7 @@
             self + From.self[keyPath: keyPath]
         }
 
+        /// Appends the columns and joins at the given key path to this select statement.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -117,6 +126,7 @@
             self + From.self[keyPath: keyPath]
         }
 
+        /// Appends the columns and joins at the given key path to this select statement.
         public subscript<
             each C: QueryRepresentable,
             each J1: Table,
@@ -129,6 +139,7 @@
             self + From.self[keyPath: keyPath]
         }
 
+        /// Appends the columns and joins at the given key path to this select statement.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -142,6 +153,7 @@
             self + From.self[keyPath: keyPath]
         }
 
+        /// Appends the columns and joins at the given key path to this select statement.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -156,6 +168,7 @@
             self + From.self[keyPath: keyPath]
         }
 
+        /// Appends the columns and joins at the given key path to this select statement.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -171,6 +184,7 @@
             self + From.self[keyPath: keyPath]
         }
 
+        /// Appends the columns and joins at the given key path to this select statement.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -189,6 +203,7 @@
     }
 
     extension Select where From: TableDraft {
+        /// Appends the columns and joins from a key path on this draft table's primary table.
         public subscript<
             each C: QueryRepresentable,
             each J: Table,
@@ -204,6 +219,7 @@
                 )
         }
 
+        /// Appends the columns and joins from a key path on this draft table's primary table.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -221,6 +237,7 @@
                 )
         }
 
+        /// Appends the columns and joins from a key path on this draft table's primary table.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -239,6 +256,7 @@
                 )
         }
 
+        /// Appends the columns and joins from a key path on this draft table's primary table.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -258,6 +276,7 @@
                 )
         }
 
+        /// Appends the columns and joins from a key path on this draft table's primary table.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -278,6 +297,7 @@
                 )
         }
 
+        /// Appends the columns and joins from a key path on this draft table's primary table.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -296,6 +316,7 @@
                 )
         }
 
+        /// Appends the columns and joins from a key path on this draft table's primary table.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -315,6 +336,7 @@
                 )
         }
 
+        /// Appends the columns and joins from a key path on this draft table's primary table.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -335,6 +357,7 @@
                 )
         }
 
+        /// Appends the columns and joins from a key path on this draft table's primary table.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -356,6 +379,7 @@
                 )
         }
 
+        /// Appends the columns and joins from a key path on this draft table's primary table.
         public subscript<
             each C: QueryRepresentable,
             each J1: Table,
@@ -374,6 +398,7 @@
                 )
         }
 
+        /// Appends the columns and joins from a key path on this draft table's primary table.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -393,6 +418,7 @@
                 )
         }
 
+        /// Appends the columns and joins from a key path on this draft table's primary table.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -413,6 +439,7 @@
                 )
         }
 
+        /// Appends the columns and joins from a key path on this draft table's primary table.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,
@@ -434,6 +461,7 @@
                 )
         }
 
+        /// Appends the columns and joins from a key path on this draft table's primary table.
         public subscript<
             each C1: QueryRepresentable,
             C2: QueryRepresentable,

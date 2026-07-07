@@ -11,12 +11,17 @@
 ///     .order(by: columns.price.desc())
 /// ```
 public struct WindowSpec: Sendable {
+    /// The partition-by expressions for the window.
     public var partitions: [QueryFragment] = []
+    /// The order-by expressions for the window.
     public var orderings: [QueryFragment] = []
+    /// The frame clause for the window, if any.
     public var frameClause: QueryFragment?
 
+    /// Creates an empty window specification.
     public init() {}
 
+    /// Creates a window specification with the given partitions, orderings, and frame clause.
     public init(
         partitions: [QueryFragment] = [],
         orderings: [QueryFragment] = [],

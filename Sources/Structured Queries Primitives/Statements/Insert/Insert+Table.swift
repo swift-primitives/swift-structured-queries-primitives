@@ -440,6 +440,7 @@ extension Table {
     }
 
     // NB: This overload is required due to a parameter pack bug.
+    /// An insert statement for a table selection.
     public static func insert<V1: _TableColumnExpression>(
         _ columns: (TableColumns) -> V1,
         select selection: () -> some PartialSelectStatement<V1.Value>,
@@ -531,6 +532,7 @@ extension Table {
     }
 
     // NB: This overload is required due to a parameter pack bug.
+    /// An insert statement for a table selection.
     public static func insert<
         V1: _TableColumnExpression,
         T1: _TableColumnExpression,
@@ -598,6 +600,7 @@ extension Table {
     }
 
     // NB: This overload is required due to a parameter pack bug.
+    /// An insert statement for a table selection.
     public static func insert<
         V1: _TableColumnExpression,
         T1: _TableColumnExpression,
@@ -670,6 +673,7 @@ extension Table {
         )
     }
 
+    /// Constructs an insert statement from the given column names, values, and conflict targets.
     public static func _insert<each ConflictTarget: _TableColumnExpression>(
         columnNames: [String],
         values: InsertValues,

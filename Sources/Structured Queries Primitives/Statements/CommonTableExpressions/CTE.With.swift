@@ -3,13 +3,16 @@ extension CTE {
     ///
     /// Also available as the global ``With`` typealias.
     public struct With<Base: Statement>: Statement, Sendable {
+        /// The query value type produced by the wrapped statement.
         public typealias QueryValue = Base.QueryValue
+        /// The From clause type, unused by this statement.
         public typealias From = Never
 
         var ctes: [Clause]
         var statement: QueryFragment
         let recursive: Bool?
 
+        /// Creates a WITH statement from common table expressions and a query.
         @_disfavoredOverload
         public init(
             recursive: Bool? = nil,
@@ -21,6 +24,7 @@ extension CTE {
             self.statement = statement().query
         }
 
+        /// Creates a WITH statement wrapping a joined select statement.
         public init<S: SelectStatement, each J: Table>(
             recursive: Bool? = nil,
             @Builder _ ctes: () -> [Clause],
@@ -36,6 +40,7 @@ extension CTE {
             self.statement = statement().query
         }
 
+        /// Creates a WITH statement wrapping a select statement without joins.
         @_disfavoredOverload
         public init<S: SelectStatement>(
             recursive: Bool? = nil,
@@ -52,6 +57,7 @@ extension CTE {
             self.statement = statement().query
         }
 
+        /// The complete WITH clause combined with the wrapped statement's query.
         public var query: QueryFragment {
             guard !statement.isEmpty else { return "" }
             let cteFragments = ctes.compactMap(\.queryFragment.presence)

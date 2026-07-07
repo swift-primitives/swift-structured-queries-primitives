@@ -26,12 +26,14 @@ public protocol QueryRepresentable<QueryOutput>: QueryDecodable {
 }
 
 extension QueryRepresentable where Self: QueryDecodable, Self == QueryOutput {
+    /// Wraps a value in this representation, which is its own output type.
     @inlinable
     @inline(__always)
     public init(queryOutput: QueryOutput) {
         self = queryOutput
     }
 
+    /// Unwraps this representation's value, which is identical to itself.
     @inlinable
     @inline(__always)
     public var queryOutput: QueryOutput {

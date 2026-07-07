@@ -18,6 +18,7 @@ public struct Updates<Base: Table>: Sendable {
         updates.isEmpty
     }
 
+    /// Assigns the given value to the given column.
     public mutating func set(
         _ column: some TableColumnExpression,
         _ value: QueryFragment
@@ -25,6 +26,7 @@ public struct Updates<Base: Table>: Sendable {
         updates.append((column.name, value))
     }
 
+    /// Accesses a column's expression by dynamic member, recording assignments on set.
     public subscript<Value>(
         dynamicMember keyPath: KeyPath<Base.TableColumns, TableColumn<Base, Value>>
     ) -> any QueryExpression<Value> {
@@ -32,6 +34,7 @@ public struct Updates<Base: Table>: Sendable {
         set { updates.append((Base.columns[keyPath: keyPath].name, newValue.queryFragment)) }
     }
 
+    /// A disfavored overload exposing a column as a typed SQL expression.
     @_disfavoredOverload
     public subscript<Value>(
         dynamicMember keyPath: KeyPath<Base.TableColumns, TableColumn<Base, Value>>
@@ -40,6 +43,7 @@ public struct Updates<Base: Table>: Sendable {
         set { updates.append((Base.columns[keyPath: keyPath].name, newValue.queryFragment)) }
     }
 
+    /// A write-only subscript that assigns a column's decoded output value.
     @_disfavoredOverload
     public subscript<Value: QueryExpression>(
         dynamicMember keyPath: KeyPath<
@@ -56,6 +60,7 @@ public struct Updates<Base: Table>: Sendable {
         }
     }
 
+    /// Accesses nested updates for a column group, merging assignments on set.
     public subscript<Value: QueryExpression>(
         dynamicMember keyPath: KeyPath<Base.TableColumns, ColumnGroup<Base, Value>>
     ) -> Updates<Value> {
@@ -63,6 +68,7 @@ public struct Updates<Base: Table>: Sendable {
         set { updates.append(contentsOf: newValue.updates) }
     }
 
+    /// A write-only subscript that assigns every writable column in a column group.
     @_disfavoredOverload
     public subscript<Value: QueryExpression>(
         dynamicMember keyPath: KeyPath<Base.TableColumns, ColumnGroup<Base, Value>>
@@ -86,8 +92,10 @@ public struct Updates<Base: Table>: Sendable {
 }
 
 extension Updates: QueryExpression {
+    /// The query value type for this expression, which never produces a result.
     public typealias QueryValue = Never
 
+    /// The SET clause fragment listing all recorded column assignments.
     public var queryFragment: QueryFragment {
         "SET \(updates.map { "\(quote: $0) = \($1)" }.joined(separator: ", "))"
     }

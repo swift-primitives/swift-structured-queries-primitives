@@ -91,6 +91,7 @@ public struct Select<Columns, From: Table, Joins>: Sendable {
     }
 }
 
+/// The set of clauses that compose a `SELECT` statement.
 public struct _SelectClauses: Sendable {
     var isEmpty = false
     var distinct: _DistinctClause?
@@ -104,6 +105,7 @@ public struct _SelectClauses: Sendable {
     var limit: _LimitClause?
 }
 
+/// The `DISTINCT` clause of a `SELECT` statement.
 public enum _DistinctClause: Sendable {
     case all
     case on([QueryFragment])
@@ -118,6 +120,7 @@ extension Select {
     #if DEBUG
         // NB: This can cause 'EXC_BAD_ACCESS' when 'C2' or 'J2' contain parameters.
         // TODO: Report issue to Swift team.
+        /// An unavailable dynamic-member subscript for unsupported column and join counts.
         @available(
             *,
             unavailable,
@@ -344,12 +347,15 @@ public func + <
 }
 
 extension Select: SelectStatement {
+    /// The query value type of a select statement, equal to its selected columns.
     public typealias QueryValue = Columns
 
+    /// The underlying clauses that compose this select statement.
     public var _selectClauses: _SelectClauses {
         clauses
     }
 
+    /// The complete `SELECT` query fragment assembled from this statement's clauses.
     public var query: QueryFragment {
         guard !isEmpty else { return "" }
         var query: QueryFragment = "SELECT"
@@ -404,10 +410,13 @@ extension Select: SelectStatement {
     }
 }
 
+/// A select statement over the given table and joins with no columns selected yet.
 public typealias SelectOf<From: Table, each Join: Table> =
     Select<(), From, (repeat each Join)>
 
+/// A single `JOIN` clause within a `SELECT` statement.
 public struct _JoinClause: QueryExpression, Sendable {
+    /// The query value type of a join clause, which produces no value.
     public typealias QueryValue = Never
 
     struct Operator {
@@ -438,6 +447,7 @@ public struct _JoinClause: QueryExpression, Sendable {
         tableName = table.tableName
     }
 
+    /// The SQL fragment representing this join clause.
     public var queryFragment: QueryFragment {
         var query: QueryFragment = ""
         if let `operator` {
@@ -456,12 +466,15 @@ public struct _JoinClause: QueryExpression, Sendable {
     }
 }
 
+/// A `LIMIT` clause within a `SELECT` statement, optionally including an `OFFSET`.
 public struct _LimitClause: QueryExpression, Sendable {
+    /// The query value type of a limit clause, which produces no value.
     public typealias QueryValue = Never
 
     let maxLength: QueryFragment
     let offset: QueryFragment?
 
+    /// The SQL fragment representing this limit clause.
     public var queryFragment: QueryFragment {
         var query: QueryFragment = "LIMIT \(maxLength)"
         if let offset {
@@ -504,4 +517,5 @@ extension CopyOnWrite: Sendable where Value: Sendable {}
 // TRACKING: unsafe-audit-findings.md Category D SP-6.
 extension CopyOnWrite.Storage: @unchecked Sendable where Value: Sendable {}
 
+/// A task-local flag indicating whether column expressions are being evaluated for selection.
 @TaskLocal public var _isSelecting = false
