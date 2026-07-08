@@ -249,34 +249,38 @@ where Base.TableColumns: PrimaryKeyedTableDefinition {
 
     /// The primary key column expression of the aliased table.
     public struct PrimaryColumn: _TableColumnExpression {
-        /// The aliased table type this column belongs to.
-        public typealias Root = TableAlias
+    }
+}
 
-        /// The value type of the primary key column.
-        public typealias Value = Base.PrimaryKey
+extension TableAlias.TableColumns.PrimaryColumn
+where Base.TableColumns: PrimaryKeyedTableDefinition {
+    /// The aliased table type this column belongs to.
+    public typealias Root = TableAlias
 
-        /// The underlying column names of the primary key.
-        public var _names: [String] {
-            Base.columns.primaryKey._names
-        }
+    /// The value type of the primary key column.
+    public typealias Value = Base.PrimaryKey
 
-        /// A key path to the primary key's query output on the aliased table.
-        public var keyPath: KeyPath<TableAlias, Base.PrimaryKey.QueryOutput> {
-            \.[member: \Base.PrimaryKey.self, column: Base.columns.primaryKey.keyPath]
-        }
+    /// The underlying column names of the primary key.
+    public var _names: [String] {
+        Base.columns.primaryKey._names
+    }
 
-        /// The SQL fragment referencing the aliased primary key column.
-        public var queryFragment: QueryFragment {
-            Base.columns.primaryKey._names
-                .map {
-                    if Name.shouldQuote {
-                        return "\(quote: Name.aliasName).\(quote: $0)"
-                    } else {
-                        return "\(raw: Name.aliasName).\(quote: $0)"
-                    }
+    /// A key path to the primary key's query output on the aliased table.
+    public var keyPath: KeyPath<TableAlias, Base.PrimaryKey.QueryOutput> {
+        \.[member: \Base.PrimaryKey.self, column: Base.columns.primaryKey.keyPath]
+    }
+
+    /// The SQL fragment referencing the aliased primary key column.
+    public var queryFragment: QueryFragment {
+        Base.columns.primaryKey._names
+            .map {
+                if Name.shouldQuote {
+                    return "\(quote: Name.aliasName).\(quote: $0)"
+                } else {
+                    return "\(raw: Name.aliasName).\(quote: $0)"
                 }
-                .joined(separator: ", ")
-        }
+            }
+            .joined(separator: ", ")
     }
 }
 

@@ -48,10 +48,6 @@ private struct CompoundSelect<QueryValue>: PartialSelectStatement {
     typealias Joins = Never
 
     struct Operator {
-        static var except: Self { Self(queryFragment: "EXCEPT") }
-        static var intersect: Self { Self(queryFragment: "INTERSECT") }
-        static var union: Self { Self(queryFragment: "UNION") }
-        static var unionAll: Self { Self(queryFragment: "UNION ALL") }
         let queryFragment: QueryFragment
     }
 
@@ -70,4 +66,11 @@ private struct CompoundSelect<QueryValue>: PartialSelectStatement {
         guard !rhs.isEmpty else { return lhs }
         return "\(lhs)\(.newlineOrSpace)\(`operator`.indented())\(.newlineOrSpace)\(rhs)"
     }
+}
+
+extension CompoundSelect.Operator {
+    fileprivate static var except: Self { Self(queryFragment: "EXCEPT") }
+    fileprivate static var intersect: Self { Self(queryFragment: "INTERSECT") }
+    fileprivate static var union: Self { Self(queryFragment: "UNION") }
+    fileprivate static var unionAll: Self { Self(queryFragment: "UNION ALL") }
 }

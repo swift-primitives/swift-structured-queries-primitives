@@ -178,6 +178,9 @@ public enum InsertValuesBuilder<Value> {
 
 /// An alias name representing the `excluded` row in an upsert conflict clause.
 public struct _ExcludedName: AliasName {
+}
+
+extension _ExcludedName {
     /// The alias name string, `excluded`.
     public static var aliasName: String { "excluded" }
 }

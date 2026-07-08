@@ -18,12 +18,6 @@ extension QueryExpression where QueryValue: QueryBindable {
 
 /// `NULL`-specific ordering for an ordering term.
 public struct NullOrdering: RawRepresentable, Sendable {
-    /// A null ordering of `NULLS FIRST`.
-    public static let first = Self(rawValue: "FIRST")
-
-    /// A null ordering of `NULLS LAST`.
-    public static let last = Self(rawValue: "LAST")
-
     /// The raw SQL keyword for this null ordering.
     public let rawValue: QueryFragment
 
@@ -33,15 +27,15 @@ public struct NullOrdering: RawRepresentable, Sendable {
     }
 }
 
+extension NullOrdering {
+    /// A null ordering of `NULLS FIRST`.
+    public static let first = Self(rawValue: "FIRST")
+
+    /// A null ordering of `NULLS LAST`.
+    public static let last = Self(rawValue: "LAST")
+}
+
 private struct OrderingTerm: QueryExpression {
-    typealias QueryValue = Never
-
-    struct Direction {
-        static let asc = Self(queryFragment: "ASC")
-        static let desc = Self(queryFragment: "DESC")
-        let queryFragment: QueryFragment
-    }
-
     let base: QueryFragment
     let direction: Direction
     let nullOrdering: NullOrdering?
@@ -51,6 +45,14 @@ private struct OrderingTerm: QueryExpression {
         self.direction = direction
         self.nullOrdering = nullOrdering
     }
+}
+
+extension OrderingTerm {
+    typealias QueryValue = Never
+
+    struct Direction {
+        let queryFragment: QueryFragment
+    }
 
     var queryFragment: QueryFragment {
         var query: QueryFragment = "\(base) \(direction.queryFragment)"
@@ -59,4 +61,9 @@ private struct OrderingTerm: QueryExpression {
         }
         return query
     }
+}
+
+extension OrderingTerm.Direction {
+    fileprivate static let asc = Self(queryFragment: "ASC")
+    fileprivate static let desc = Self(queryFragment: "DESC")
 }

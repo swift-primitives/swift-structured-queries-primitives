@@ -51,7 +51,9 @@ public enum QueryBinding: Hashable, Sendable {
 
     /// An error describing why a value cannot be bound to a statement.
     case invalid(QueryBindingError)
+}
 
+extension QueryBinding {
     /// Wraps an arbitrary error as an invalid query binding.
     @_disfavoredOverload
     public static func invalid(_ error: any Swift.Error) -> Self {
@@ -67,6 +69,9 @@ public struct QueryBindingError: Swift.Error, Hashable {
     public init(underlyingError: any Swift.Error) {
         self.underlyingError = underlyingError
     }
+}
+
+extension QueryBindingError {
     /// Always returns `true`, since `QueryBindingError` values are not meaningfully comparable.
     public static func == (lhs: Self, rhs: Self) -> Bool { true }
     /// No-op hash implementation, since all `QueryBindingError` values are considered equal.

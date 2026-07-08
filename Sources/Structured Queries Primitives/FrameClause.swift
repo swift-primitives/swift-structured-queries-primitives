@@ -29,7 +29,9 @@ public enum FrameBound: Sendable {
 
     /// End of the partition
     case unboundedFollowing
+}
 
+extension FrameBound {
     /// Generate SQL fragment for this frame bound
     internal var queryFragment: QueryFragment {
         switch self {
@@ -62,7 +64,9 @@ public enum FrameBounds: Sendable {
     /// Shorthand for BETWEEN <bound> AND CURRENT ROW
     /// - Parameter bound: The starting frame bound (ending is implicitly CURRENT ROW)
     case start(FrameBound)
+}
 
+extension FrameBounds {
     /// Generate SQL fragment for these frame bounds
     internal func queryFragment(frameType: String) -> QueryFragment {
         switch self {

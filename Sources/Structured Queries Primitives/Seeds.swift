@@ -71,38 +71,42 @@ public struct Seeds: Sequence {
         self.seeds = build()
     }
 
+    /// An iterator that produces batched insert statements for ``Seeds``.
+    public struct Iterator: IteratorProtocol {
+        var seeds: [any Table]
+    }
+}
+
+extension Seeds {
     /// Creates an iterator over the batched insert statements for this seed sequence.
     public func makeIterator() -> Iterator {
         Iterator(seeds: seeds)
     }
+}
 
-    /// An iterator that produces batched insert statements for ``Seeds``.
-    public struct Iterator: IteratorProtocol {
-        var seeds: [any Table]
+extension Seeds.Iterator {
+    /// Returns the next batched insert statement for a run of same-type seed rows.
+    public mutating func next() -> SQLQueryExpression<Void>? {
+        guard let first = seeds.first else { return nil }
 
-        /// Returns the next batched insert statement for a run of same-type seed rows.
-        public mutating func next() -> SQLQueryExpression<Void>? {
-            guard let first = seeds.first else { return nil }
+        let firstType = type(of: first)
 
-            let firstType = type(of: first)
-
-            if let firstType = firstType as? any TableDraft.Type {
-                func insertBatch<T: TableDraft>(_: T.Type) -> SQLQueryExpression<Void> {
-                    let batch = Array(seeds.lazy.prefix { $0 is T }.compactMap { $0 as? T })
-                    defer { seeds.removeFirst(batch.count) }
-                    return SQLQueryExpression(T.PrimaryTable.insert { batch })
-                }
-
-                return insertBatch(firstType)
-            } else {
-                func insertBatch<T: Table>(_: T.Type) -> SQLQueryExpression<Void> {
-                    let batch = Array(seeds.lazy.prefix { $0 is T }.compactMap { $0 as? T })
-                    defer { seeds.removeFirst(batch.count) }
-                    return SQLQueryExpression(T.insert { batch })
-                }
-
-                return insertBatch(firstType)
+        if let firstType = firstType as? any TableDraft.Type {
+            func insertBatch<T: TableDraft>(_: T.Type) -> SQLQueryExpression<Void> {
+                let batch = Array(seeds.lazy.prefix { $0 is T }.compactMap { $0 as? T })
+                defer { seeds.removeFirst(batch.count) }
+                return SQLQueryExpression(T.PrimaryTable.insert { batch })
             }
+
+            return insertBatch(firstType)
+        } else {
+            func insertBatch<T: Table>(_: T.Type) -> SQLQueryExpression<Void> {
+                let batch = Array(seeds.lazy.prefix { $0 is T }.compactMap { $0 as? T })
+                defer { seeds.removeFirst(batch.count) }
+                return SQLQueryExpression(T.insert { batch })
+            }
+
+            return insertBatch(firstType)
         }
     }
 }

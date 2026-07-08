@@ -122,96 +122,99 @@ extension Optional: Table, PartialSelectStatement, Statement where Wrapped: Tabl
     /// The columns of an optional table.
     @dynamicMemberLookup
     public struct TableColumns: TableDefinition {
-        /// The optional table type these columns describe.
-        public typealias QueryValue = Optional
-
-        /// The optionalized columns of the wrapped table.
-        public static var allColumns: [any TableColumnExpression] {
-            func open<Root, Value>(
-                _ column: some TableColumnExpression<Root, Value>
-            ) -> any TableColumnExpression {
-                guard let column = column as? TableColumn<Wrapped, Value>
-                else {
-                    let column = column as! GeneratedColumn<Wrapped, Value>
-                    return GeneratedColumn<Optional, Value?>(
-                        column.name,
-                        keyPath: \.[member: \Value.self, column: column.keyPath],
-                        default: column.defaultValue
-                    )
-                }
-                return TableColumn<Optional, Value?>(
-                    column.name,
-                    keyPath: \.[member: \Value.self, column: column.keyPath],
-                    default: column.defaultValue
-                )
-            }
-            return Wrapped.TableColumns.allColumns.map { open($0) }
-        }
-
-        /// The optionalized writable columns of the wrapped table.
-        public static var writableColumns: [any WritableTableColumnExpression] {
-            func open<Root, Value>(
-                _ column: some WritableTableColumnExpression<Root, Value>
-            ) -> any WritableTableColumnExpression {
-                let column = column as! TableColumn<Wrapped, Value>
-                return TableColumn<Optional, Value?>(
-                    column.name,
-                    keyPath: \.[member: \Value.self, column: column.keyPath],
-                    default: column.defaultValue
-                )
-            }
-            return Wrapped.TableColumns.writableColumns.map { open($0) }
-        }
-
-        /// Returns the optionalized table column for the given wrapped column.
-        public subscript<Member>(
-            dynamicMember keyPath: KeyPath<Wrapped.TableColumns, TableColumn<Wrapped, Member>>
-        ) -> TableColumn<Optional, Member?> {
-            let column = Wrapped.columns[keyPath: keyPath]
-            return TableColumn<Optional, Member?>(
-                column.name,
-                keyPath: \.[member: \Member.self, column: column.keyPath]
-            )
-        }
-
-        /// Returns the optionalized generated column for the given wrapped column.
-        public subscript<Member>(
-            dynamicMember keyPath: KeyPath<Wrapped.TableColumns, GeneratedColumn<Wrapped, Member>>
-        ) -> GeneratedColumn<Optional, Member?> {
-            let column = Wrapped.columns[keyPath: keyPath]
-            return GeneratedColumn<Optional, Member?>(
-                column.name,
-                keyPath: \.[member: \Member.self, column: column.keyPath]
-            )
-        }
-
-        /// Returns the optionalized column group for the given wrapped column.
-        public subscript<Member>(
-            dynamicMember keyPath: KeyPath<Wrapped.TableColumns, ColumnGroup<Wrapped, Member>>
-        ) -> ColumnGroup<Optional, Member?> {
-            ColumnGroup<Optional, Member?>(
-                keyPath: \.[member: \Member.self, column: Wrapped.columns[keyPath: keyPath].keyPath]
-            )
-        }
-
-        /// Returns the optionalized expression for the given wrapped column.
-        public subscript<Member: QueryExpression>(
-            dynamicMember keyPath: KeyPath<Wrapped.TableColumns, Member>
-        ) -> some QueryExpression<Member.QueryValue?> {
-            Member?.some(Wrapped.columns[keyPath: keyPath])
-        }
-
-        /// Returns the wrapped optional expression for the given column.
-        @_disfavoredOverload
-        public subscript<QueryValue>(
-            dynamicMember keyPath: KeyPath<Wrapped.TableColumns, some QueryExpression<QueryValue?>>
-        ) -> some QueryExpression<QueryValue?> {
-            Wrapped.columns[keyPath: keyPath]
-        }
     }
 
     /// The optional selection type of the wrapped table.
     public typealias Selection = Wrapped.Selection?
+}
+
+extension Optional.TableColumns where Wrapped: Table {
+    /// The optional table type these columns describe.
+    public typealias QueryValue = Optional
+
+    /// The optionalized columns of the wrapped table.
+    public static var allColumns: [any TableColumnExpression] {
+        func open<Root, Value>(
+            _ column: some TableColumnExpression<Root, Value>
+        ) -> any TableColumnExpression {
+            guard let column = column as? TableColumn<Wrapped, Value>
+            else {
+                let column = column as! GeneratedColumn<Wrapped, Value>
+                return GeneratedColumn<Optional, Value?>(
+                    column.name,
+                    keyPath: \.[member: \Value.self, column: column.keyPath],
+                    default: column.defaultValue
+                )
+            }
+            return TableColumn<Optional, Value?>(
+                column.name,
+                keyPath: \.[member: \Value.self, column: column.keyPath],
+                default: column.defaultValue
+            )
+        }
+        return Wrapped.TableColumns.allColumns.map { open($0) }
+    }
+
+    /// The optionalized writable columns of the wrapped table.
+    public static var writableColumns: [any WritableTableColumnExpression] {
+        func open<Root, Value>(
+            _ column: some WritableTableColumnExpression<Root, Value>
+        ) -> any WritableTableColumnExpression {
+            let column = column as! TableColumn<Wrapped, Value>
+            return TableColumn<Optional, Value?>(
+                column.name,
+                keyPath: \.[member: \Value.self, column: column.keyPath],
+                default: column.defaultValue
+            )
+        }
+        return Wrapped.TableColumns.writableColumns.map { open($0) }
+    }
+
+    /// Returns the optionalized table column for the given wrapped column.
+    public subscript<Member>(
+        dynamicMember keyPath: KeyPath<Wrapped.TableColumns, TableColumn<Wrapped, Member>>
+    ) -> TableColumn<Optional, Member?> {
+        let column = Wrapped.columns[keyPath: keyPath]
+        return TableColumn<Optional, Member?>(
+            column.name,
+            keyPath: \.[member: \Member.self, column: column.keyPath]
+        )
+    }
+
+    /// Returns the optionalized generated column for the given wrapped column.
+    public subscript<Member>(
+        dynamicMember keyPath: KeyPath<Wrapped.TableColumns, GeneratedColumn<Wrapped, Member>>
+    ) -> GeneratedColumn<Optional, Member?> {
+        let column = Wrapped.columns[keyPath: keyPath]
+        return GeneratedColumn<Optional, Member?>(
+            column.name,
+            keyPath: \.[member: \Member.self, column: column.keyPath]
+        )
+    }
+
+    /// Returns the optionalized column group for the given wrapped column.
+    public subscript<Member>(
+        dynamicMember keyPath: KeyPath<Wrapped.TableColumns, ColumnGroup<Wrapped, Member>>
+    ) -> ColumnGroup<Optional, Member?> {
+        ColumnGroup<Optional, Member?>(
+            keyPath: \.[member: \Member.self, column: Wrapped.columns[keyPath: keyPath].keyPath]
+        )
+    }
+
+    /// Returns the optionalized expression for the given wrapped column.
+    public subscript<Member: QueryExpression>(
+        dynamicMember keyPath: KeyPath<Wrapped.TableColumns, Member>
+    ) -> some QueryExpression<Member.QueryValue?> {
+        Member?.some(Wrapped.columns[keyPath: keyPath])
+    }
+
+    /// Returns the wrapped optional expression for the given column.
+    @_disfavoredOverload
+    public subscript<QueryValue>(
+        dynamicMember keyPath: KeyPath<Wrapped.TableColumns, some QueryExpression<QueryValue?>>
+    ) -> some QueryExpression<QueryValue?> {
+        Wrapped.columns[keyPath: keyPath]
+    }
 }
 
 extension Optional: PrimaryKeyedTable where Wrapped: PrimaryKeyedTable {
@@ -235,31 +238,35 @@ where Wrapped.TableColumns: PrimaryKeyedTableDefinition {
 
     /// The primary key column of an optional table.
     public struct PrimaryColumn: _TableColumnExpression {
-        /// The optional root table type of this column.
-        public typealias Root = Optional
-
-        /// The optional value type of this primary key column.
-        public typealias Value = Wrapped.PrimaryKey?
-
-        /// The names of the wrapped primary key columns.
-        public var _names: [String] {
-            Wrapped.columns.primaryKey._names
-        }
-
-        /// The key path from an optional row to this column's optional output.
-        public var keyPath: KeyPath<Wrapped?, Wrapped.PrimaryKey.QueryOutput?> {
-            \.[member: \Wrapped.PrimaryKey.self, column: Wrapped.columns.primaryKey.keyPath]
-        }
-
-        /// The SQL fragment for the wrapped primary key column.
-        public var queryFragment: QueryFragment {
-            Wrapped.columns.primaryKey.queryFragment
-        }
     }
 
     /// The primary key column of this optional table.
     public var primaryKey: PrimaryColumn {
         PrimaryColumn()
+    }
+}
+
+extension Optional.TableColumns.PrimaryColumn
+where Wrapped.TableColumns: PrimaryKeyedTableDefinition {
+    /// The optional root table type of this column.
+    public typealias Root = Optional
+
+    /// The optional value type of this primary key column.
+    public typealias Value = Wrapped.PrimaryKey?
+
+    /// The names of the wrapped primary key columns.
+    public var _names: [String] {
+        Wrapped.columns.primaryKey._names
+    }
+
+    /// The key path from an optional row to this column's optional output.
+    public var keyPath: KeyPath<Wrapped?, Wrapped.PrimaryKey.QueryOutput?> {
+        \.[member: \Wrapped.PrimaryKey.self, column: Wrapped.columns.primaryKey.keyPath]
+    }
+
+    /// The SQL fragment for the wrapped primary key column.
+    public var queryFragment: QueryFragment {
+        Wrapped.columns.primaryKey.queryFragment
     }
 }
 

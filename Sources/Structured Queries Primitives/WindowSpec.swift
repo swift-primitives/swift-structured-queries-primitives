@@ -31,7 +31,9 @@ public struct WindowSpec: Sendable {
         self.orderings = orderings
         self.frameClause = frameClause
     }
+}
 
+extension WindowSpec {
     /// Add a partition expression using a single QueryExpression
     public func partition(by expression: some QueryExpression) -> WindowSpec {
         var copy = self

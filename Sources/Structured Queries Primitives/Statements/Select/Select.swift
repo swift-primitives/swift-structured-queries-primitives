@@ -416,17 +416,6 @@ public typealias SelectOf<From: Table, each Join: Table> =
 
 /// A single `JOIN` clause within a `SELECT` statement.
 public struct _JoinClause: QueryExpression, Sendable {
-    /// The query value type of a join clause, which produces no value.
-    public typealias QueryValue = Never
-
-    struct Operator {
-        static let full = Self(queryFragment: "FULL OUTER")
-        static let inner = Self(queryFragment: "INNER")
-        static let left = Self(queryFragment: "LEFT OUTER")
-        static let right = Self(queryFragment: "RIGHT OUTER")
-        let queryFragment: QueryFragment
-    }
-
     let constraint: QueryFragment
     let `operator`: QueryFragment?
     let schemaName: String?
@@ -445,6 +434,15 @@ public struct _JoinClause: QueryExpression, Sendable {
         tableAlias = table.tableAlias
         tableColumns = table.columns.queryFragment
         tableName = table.tableName
+    }
+}
+
+extension _JoinClause {
+    /// The query value type of a join clause, which produces no value.
+    public typealias QueryValue = Never
+
+    struct Operator {
+        let queryFragment: QueryFragment
     }
 
     /// The SQL fragment representing this join clause.
@@ -466,13 +464,22 @@ public struct _JoinClause: QueryExpression, Sendable {
     }
 }
 
+extension _JoinClause.Operator {
+    static let full = Self(queryFragment: "FULL OUTER")
+    static let inner = Self(queryFragment: "INNER")
+    static let left = Self(queryFragment: "LEFT OUTER")
+    static let right = Self(queryFragment: "RIGHT OUTER")
+}
+
 /// A `LIMIT` clause within a `SELECT` statement, optionally including an `OFFSET`.
 public struct _LimitClause: QueryExpression, Sendable {
-    /// The query value type of a limit clause, which produces no value.
-    public typealias QueryValue = Never
-
     let maxLength: QueryFragment
     let offset: QueryFragment?
+}
+
+extension _LimitClause {
+    /// The query value type of a limit clause, which produces no value.
+    public typealias QueryValue = Never
 
     /// The SQL fragment representing this limit clause.
     public var queryFragment: QueryFragment {

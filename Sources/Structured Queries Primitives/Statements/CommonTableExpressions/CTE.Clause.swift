@@ -4,9 +4,6 @@ import Structured_Queries_Primitives_Support
 extension CTE {
     /// A single common table expression clause.
     public struct Clause: QueryExpression, Sendable {
-        /// The query value type for this clause, which produces no result.
-        public typealias QueryValue = ()
-
         let tableName: QueryFragment
         let select: QueryFragment
         let materialization: MaterializationHint?
@@ -21,75 +18,80 @@ extension CTE {
             self.select = select
             self.materialization = materialization
         }
+    }
+}
 
-        /// The SQL fragment defining this CTE, including its materialization hint.
-        public var queryFragment: QueryFragment {
-            guard !select.isEmpty else { return "" }
+extension CTE.Clause {
+    /// The query value type for this clause, which produces no result.
+    public typealias QueryValue = ()
 
-            var fragment: QueryFragment = tableName
+    /// The SQL fragment defining this CTE, including its materialization hint.
+    public var queryFragment: QueryFragment {
+        guard !select.isEmpty else { return "" }
 
-            // Add materialization hint (PostgreSQL 12+ feature)
-            if let materialization {
-                switch materialization {
-                case .materialized:
-                    fragment.append(" AS MATERIALIZED")
-                case .notMaterialized:
-                    fragment.append(" AS NOT MATERIALIZED")
-                }
-            } else {
-                fragment.append(" AS")
+        var fragment: QueryFragment = tableName
+
+        // Add materialization hint (PostgreSQL 12+ feature)
+        if let materialization {
+            switch materialization {
+            case .materialized:
+                fragment.append(" AS MATERIALIZED")
+            case .notMaterialized:
+                fragment.append(" AS NOT MATERIALIZED")
             }
-
-            fragment.append(" (\(.newline)\(select.indented())\(.newline))")
-            return fragment
+        } else {
+            fragment.append(" AS")
         }
 
-        /// Checks if this CTE is recursive (references itself in the query).
-        ///
-        /// A CTE is considered recursive if:
-        /// 1. The query contains UNION or UNION ALL
-        /// 2. The query references the CTE's own table name (self-reference)
-        ///
-        /// This follows PostgreSQL's requirement that recursive CTEs must use `WITH RECURSIVE`.
-        var isRecursive: Bool {
-            let tableNameString = extractTableName(from: tableName)
-            let selectSQL = extractSQL(from: select)
+        fragment.append(" (\(.newline)\(select.indented())\(.newline))")
+        return fragment
+    }
 
-            // Check for UNION pattern (required for recursion)
-            let hasUnion = selectSQL.contains("UNION ALL") || selectSQL.contains("UNION")
-            guard hasUnion else { return false }
+    /// Checks if this CTE is recursive (references itself in the query).
+    ///
+    /// A CTE is considered recursive if:
+    /// 1. The query contains UNION or UNION ALL
+    /// 2. The query references the CTE's own table name (self-reference)
+    ///
+    /// This follows PostgreSQL's requirement that recursive CTEs must use `WITH RECURSIVE`.
+    var isRecursive: Bool {
+        let tableNameString = extractTableName(from: tableName)
+        let selectSQL = extractSQL(from: select)
 
-            // Check for self-reference in FROM clause
-            // Look for: FROM "tableName" or FROM tableName
-            let quotedTableName = "\"\(tableNameString)\""
-            return selectSQL.contains("FROM \(quotedTableName)")
-                || selectSQL.contains("FROM \(tableNameString)")
-        }
+        // Check for UNION pattern (required for recursion)
+        let hasUnion = selectSQL.contains("UNION ALL") || selectSQL.contains("UNION")
+        guard hasUnion else { return false }
 
-        /// Extracts the table name string from a QueryFragment.
-        private func extractTableName(from fragment: QueryFragment) -> String {
-            // QueryFragment for table name is typically just the string
-            fragment.segments
-                .compactMap { segment in
-                    if case .sql(let sql) = segment {
-                        return sql.trimmingCharacters(in: .whitespacesAndNewlines)
-                    }
-                    return nil
+        // Check for self-reference in FROM clause
+        // Look for: FROM "tableName" or FROM tableName
+        let quotedTableName = "\"\(tableNameString)\""
+        return selectSQL.contains("FROM \(quotedTableName)")
+            || selectSQL.contains("FROM \(tableNameString)")
+    }
+
+    /// Extracts the table name string from a QueryFragment.
+    private func extractTableName(from fragment: QueryFragment) -> String {
+        // QueryFragment for table name is typically just the string
+        fragment.segments
+            .compactMap { segment in
+                if case .sql(let sql) = segment {
+                    return sql.trimmingCharacters(in: .whitespacesAndNewlines)
                 }
-                .joined()
-        }
+                return nil
+            }
+            .joined()
+    }
 
-        /// Extracts SQL string from QueryFragment for pattern matching.
-        private func extractSQL(from fragment: QueryFragment) -> String {
-            fragment.segments
-                .compactMap { segment in
-                    if case .sql(let sql) = segment {
-                        return sql
-                    }
-                    return nil
+    /// Extracts SQL string from QueryFragment for pattern matching.
+    private func extractSQL(from fragment: QueryFragment) -> String {
+        fragment.segments
+            .compactMap { segment in
+                if case .sql(let sql) = segment {
+                    return sql
                 }
-                .joined()
-        }
+                return nil
+            }
+            .joined()
     }
 }
 
