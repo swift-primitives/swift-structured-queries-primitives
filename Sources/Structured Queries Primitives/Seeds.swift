@@ -70,7 +70,9 @@ public struct Seeds: Sequence {
     public init(@SeedsBuilder _ build: () -> [any Table]) {
         self.seeds = build()
     }
+}
 
+extension Seeds {
     /// An iterator that produces batched insert statements for ``Seeds``.
     public struct Iterator: IteratorProtocol {
         var seeds: [any Table]
