@@ -35,8 +35,7 @@ let package = Package(
             dependencies: [
                 "Structured Queries Primitives Support",
                 .product(name: "Tagged Primitives", package: "swift-tagged-primitives"),
-            ],
-            exclude: ["Documentation.docc"]
+            ]
         ),
 
         // MARK: - Support
