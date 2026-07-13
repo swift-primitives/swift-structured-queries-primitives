@@ -26,20 +26,30 @@ public struct Updates<Base: Table>: Sendable {
         updates.append((column.name, value))
     }
 
-    /// Accesses a column's expression by dynamic member, recording assignments on set.
-    public subscript<Value>(
-        dynamicMember keyPath: KeyPath<Base.TableColumns, TableColumn<Base, Value>>
-    ) -> any QueryExpression<Value> {
-        get { Base.columns[keyPath: keyPath] }
-        set { updates.append((Base.columns[keyPath: keyPath].name, newValue.queryFragment)) }
-    }
-
-    /// A disfavored overload exposing a column as a typed SQL expression.
-    @_disfavoredOverload
+    /// Accesses a column as a typed SQL expression, recording assignments on set.
+    ///
+    /// The primary subscript returns concrete ``SQLQueryExpression`` so that compound-assign
+    /// sugar (`$0.count += 1`) and mutating members (`toggle()`, `negate()`) resolve to it
+    /// deterministically, above the disfavored overloads below.
     public subscript<Value>(
         dynamicMember keyPath: KeyPath<Base.TableColumns, TableColumn<Base, Value>>
     ) -> SQLQueryExpression<Value> {
         get { SQLQueryExpression(Base.columns[keyPath: keyPath]) }
+        set { updates.append((Base.columns[keyPath: keyPath].name, newValue.queryFragment)) }
+    }
+
+    /// A disfavored overload whose setter accepts any erased expression
+    /// (_e.g._, `$0.count = -$0.count`).
+    ///
+    /// For plain-value assignment of an expression-conforming output (`$0.count = 5`,
+    /// `$0.title = "Test"`) this setter ties at equal tier with the write-only
+    /// `QueryOutput` subscript below. The tie is deliberate and benign: both setters
+    /// append a byte-identical fragment, so resolution order is unobservable.
+    @_disfavoredOverload
+    public subscript<Value>(
+        dynamicMember keyPath: KeyPath<Base.TableColumns, TableColumn<Base, Value>>
+    ) -> any QueryExpression<Value> {
+        get { Base.columns[keyPath: keyPath] }
         set { updates.append((Base.columns[keyPath: keyPath].name, newValue.queryFragment)) }
     }
 
