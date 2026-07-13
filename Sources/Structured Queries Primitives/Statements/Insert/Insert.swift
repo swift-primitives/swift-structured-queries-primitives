@@ -193,13 +193,16 @@ extension Insert: Statement {
             query.append("\(.newlineOrSpace)RETURNING \(returning.joined(separator: ", "))")
         }
         if hasInvalidWhere {
-            assertionFailure(
-                """
+            let message = """
                 Insert statement has invalid update 'where': \(updateFilter.joined(separator: " AND "))
 
                 \(query)
                 """
-            )
+            if let report = QueryFragment.Report.invalid {
+                report(message)
+            } else {
+                assertionFailure(message)
+            }
         }
         return query
     }
