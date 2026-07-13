@@ -4,6 +4,12 @@ extension Select {
     ///
     /// - Parameter grouping: A closure that returns a column to group by from this select's tables.
     /// - Returns: A new select statement that groups by the given column.
+    ///
+    /// Disfavored so that single-join selects resolve to the `Joins: Table` overload below:
+    /// with a one-element pack the two have identical effective signatures, and the generic
+    /// return `C` defeats the specialization ranking that disambiguates the equivalent
+    /// `having`/`order` overload pairs.
+    @_disfavoredOverload
     public func group<C: QueryExpression, each J: Table>(
         by grouping: (From.TableColumns, repeat (each J).TableColumns) -> C
     ) -> Self where Joins == (repeat each J) {
@@ -15,6 +21,9 @@ extension Select {
     ///
     /// - Parameter grouping: A closure that returns a column to group by from this select's tables.
     /// - Returns: A new select statement that groups by the given column.
+    ///
+    /// Disfavored for the same single-join disambiguation as the single-column pack overload.
+    @_disfavoredOverload
     public func group<
         C1: QueryExpression,
         C2: QueryExpression,
