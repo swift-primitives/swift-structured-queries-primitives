@@ -1,5 +1,3 @@
-public import Foundation
-
 /// A type that can be represented in a query and decoded to a Swift type.
 ///
 /// Many types conform to this protocol, including simple value types that can be decoded from a
@@ -67,6 +65,4 @@ extension UInt16: QueryRepresentable {}
 
 extension UInt32: QueryRepresentable {}
 
-extension Decimal: QueryRepresentable {}
-
-extension UUID: QueryRepresentable {}
+extension QueryBinding.UUID: QueryRepresentable {}

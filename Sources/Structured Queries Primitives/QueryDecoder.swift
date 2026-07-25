@@ -1,4 +1,5 @@
-public import Foundation
+public import Byte_Primitives
+public import Time_Primitives
 
 /// A type that can decode values from a database connection into in-memory representations.
 public protocol QueryDecoder {
@@ -7,7 +8,7 @@ public protocol QueryDecoder {
     /// - Parameter columnType: The type to decode as.
     /// - Returns: A value of the requested type, or `nil` if the column is `NULL`.
     // swiftlint:disable:next discouraged_optional_collection
-    mutating func decode(_ columnType: [UInt8].Type) throws -> [UInt8]?
+    mutating func decode(_ columnType: [Byte].Type) throws -> [Byte]?
 
     /// Decodes a single value of the given type from the current column.
     ///
@@ -49,19 +50,13 @@ public protocol QueryDecoder {
     ///
     /// - Parameter columnType: The type to decode as.
     /// - Returns: A value of the requested type, or `nil` if the column is `NULL`.
-    mutating func decode(_ columnType: Date.Type) throws -> Date?
+    mutating func decode(_ columnType: Instant.Type) throws -> Instant?
 
     /// Decodes a single value of the given type from the current column.
     ///
     /// - Parameter columnType: The type to decode as.
     /// - Returns: A value of the requested type, or `nil` if the column is `NULL`.
-    mutating func decode(_ columnType: UUID.Type) throws -> UUID?
-
-    /// Decodes a single value of the given type from the current column.
-    ///
-    /// - Parameter columnType: The type to decode as.
-    /// - Returns: A value of the requested type, or `nil` if the column is `NULL`.
-    mutating func decode(_ columnType: Decimal.Type) throws -> Decimal?
+    mutating func decode(_ columnType: QueryBinding.UUID.Type) throws -> QueryBinding.UUID?
 
     /// Decodes a single value of the given type starting from the current column.
     ///

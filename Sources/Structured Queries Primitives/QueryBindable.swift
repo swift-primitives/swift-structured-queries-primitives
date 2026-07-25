@@ -1,4 +1,4 @@
-public import Foundation
+public import Time_Primitives
 
 /// A type representing a value that can be bound to a parameter of a SQL statement.
 public protocol QueryBindable: QueryRepresentable, QueryExpression where QueryValue: QueryBindable {
@@ -29,8 +29,8 @@ extension Double: QueryBindable {
     public var queryBinding: QueryBinding { .double(self) }
 }
 
-extension Date: QueryBindable {
-    /// The query binding representing this date value.
+extension Instant: QueryBindable {
+    /// The query binding representing this instant.
     public var queryBinding: QueryBinding { .date(self) }
 }
 
@@ -95,14 +95,9 @@ extension UInt64: QueryBindable {
     }
 }
 
-extension UUID: QueryBindable {
+extension QueryBinding.UUID: QueryBindable {
     /// The query binding representing this UUID value.
     public var queryBinding: QueryBinding { .uuid(self) }
-}
-
-extension Decimal: QueryBindable {
-    /// The query binding representing this decimal value.
-    public var queryBinding: QueryBinding { .decimal(self) }
 }
 
 extension DefaultStringInterpolation {

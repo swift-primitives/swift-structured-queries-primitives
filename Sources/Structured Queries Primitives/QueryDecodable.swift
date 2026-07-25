@@ -1,4 +1,4 @@
-public import Foundation
+public import Time_Primitives
 
 /// A type that can decode itself from a query.
 public protocol QueryDecodable: _OptionalPromotable {
@@ -55,11 +55,11 @@ extension Bool: QueryDecodable {
     }
 }
 
-extension Date: QueryDecodable {
-    /// Creates a date by decoding from the given decoder.
+extension Instant: QueryDecodable {
+    /// Creates an instant by decoding from the given decoder.
     @inlinable
     public init(decoder: inout some QueryDecoder) throws {
-        guard let result = try decoder.decode(Date.self)
+        guard let result = try decoder.decode(Instant.self)
         else { throw QueryDecodingError.missingRequiredColumn }
         self = result
     }
@@ -161,21 +161,11 @@ extension UInt64: QueryDecodable {
     }
 }
 
-extension UUID: QueryDecodable {
+extension QueryBinding.UUID: QueryDecodable {
     /// Creates a UUID by decoding from the given decoder.
     @inlinable
     public init(decoder: inout some QueryDecoder) throws {
-        guard let result = try decoder.decode(UUID.self)
-        else { throw QueryDecodingError.missingRequiredColumn }
-        self = result
-    }
-}
-
-extension Decimal: QueryDecodable {
-    /// Creates a decimal by decoding from the given decoder.
-    @inlinable
-    public init(decoder: inout some QueryDecoder) throws {
-        guard let result = try decoder.decode(Decimal.self)
+        guard let result = try decoder.decode(QueryBinding.UUID.self)
         else { throw QueryDecodingError.missingRequiredColumn }
         self = result
     }
