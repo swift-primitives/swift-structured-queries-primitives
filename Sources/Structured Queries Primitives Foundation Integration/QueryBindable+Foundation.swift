@@ -61,26 +61,15 @@ extension Foundation.Date: QueryBindable {
 extension Foundation.UUID: QueryBindable {
     /// This UUID's binding, carried as its 16 raw bytes.
     public var queryBinding: QueryBinding {
-        let u = uuid
-        let bytes = [
-            u.0, u.1, u.2, u.3, u.4, u.5, u.6, u.7,
-            u.8, u.9, u.10, u.11, u.12, u.13, u.14, u.15,
-        ].map(Byte.init)
-        return .uuid(QueryBinding.UUID(bytes: bytes))
+        .uuid(QueryBinding.UUID(self))
     }
 
     /// Creates a UUID by decoding its 16 raw bytes from the given decoder.
     public init(decoder: inout some QueryDecoder) throws {
         guard let identifier = try decoder.decode(QueryBinding.UUID.self)
         else { throw QueryDecodingError.missingRequiredColumn }
-        let b = identifier.bytes.map(\.underlying)
-        guard b.count == 16 else { throw InvalidUUID() }
-        self.init(
-            uuid: (
-                b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
-                b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]
-            )
-        )
+        guard let value = Self(identifier) else { throw InvalidUUID() }
+        self = value
     }
 }
 
@@ -99,6 +88,42 @@ extension Foundation.Decimal: QueryBindable {
         let digits = try String(decoder: &decoder)
         guard let value = Self(string: digits) else { throw InvalidDecimal() }
         self = value
+    }
+}
+
+// MARK: - QueryBinding.UUID <-> Foundation.UUID
+
+extension QueryBinding.UUID {
+    /// Creates the core's byte-based UUID from a `Foundation.UUID`.
+    ///
+    /// Element-level conversion, distinct from the whole-value `queryBinding`
+    /// above: array bindings such as ``QueryBinding/uuidArray(_:)`` need to map
+    /// each element, and without this every consumer would re-spell the 16-byte
+    /// expansion — duplicating a byte order that must not drift.
+    public init(_ uuid: Foundation.UUID) {
+        let u = uuid.uuid
+        self.init(
+            bytes: [
+                u.0, u.1, u.2, u.3, u.4, u.5, u.6, u.7,
+                u.8, u.9, u.10, u.11, u.12, u.13, u.14, u.15,
+            ].map(Byte.init)
+        )
+    }
+}
+
+extension Foundation.UUID {
+    /// Creates a `Foundation.UUID` from the core's byte-based UUID.
+    ///
+    /// Returns `nil` when the payload is not exactly 16 bytes.
+    public init?(_ identifier: QueryBinding.UUID) {
+        let b = identifier.bytes.map(\.underlying)
+        guard b.count == 16 else { return nil }
+        self.init(
+            uuid: (
+                b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
+                b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]
+            )
+        )
     }
 }
 
