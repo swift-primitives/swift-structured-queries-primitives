@@ -20,6 +20,10 @@ let package = Package(
             targets: ["Structured Queries Primitives Support"]
         ),
         .library(
+            name: "Structured Queries Primitives Foundation Integration",
+            targets: ["Structured Queries Primitives Foundation Integration"]
+        ),
+        .library(
             name: "Structured Queries Primitives Test Support",
             targets: ["Structured Queries Primitives Test Support"]
         ),
@@ -42,6 +46,14 @@ let package = Package(
         .target(
             name: "Structured Queries Primitives Support",
             dependencies: []
+        ),
+
+        // MARK: - Foundation Integration (opt-in leaf; no core/Support target depends on it)
+        .target(
+            name: "Structured Queries Primitives Foundation Integration",
+            dependencies: [
+                "Structured Queries Primitives",
+            ]
         ),
 
         // MARK: - Tests

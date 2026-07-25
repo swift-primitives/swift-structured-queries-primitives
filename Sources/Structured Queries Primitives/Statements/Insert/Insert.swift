@@ -1,4 +1,3 @@
-import Foundation
 import Structured_Queries_Primitives_Support
 
 // Helper function to check if a QueryFragment represents NULL

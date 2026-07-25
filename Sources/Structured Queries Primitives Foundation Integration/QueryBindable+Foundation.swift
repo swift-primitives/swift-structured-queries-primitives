@@ -1,4 +1,5 @@
 public import Foundation
+public import Structured_Queries_Primitives
 
 extension Data: QueryBindable {
     /// This value's binding, encoded as a blob.

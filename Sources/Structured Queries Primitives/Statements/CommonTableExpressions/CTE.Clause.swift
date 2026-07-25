@@ -1,4 +1,3 @@
-import Foundation
 import Structured_Queries_Primitives_Support
 
 extension CTE {
@@ -75,7 +74,7 @@ extension CTE.Clause {
         fragment.segments
             .compactMap { segment in
                 if case .sql(let sql) = segment {
-                    return sql.trimmingCharacters(in: .whitespacesAndNewlines)
+                    return sql.trimmedWhitespaceAndNewlines()
                 }
                 return nil
             }
@@ -106,5 +105,18 @@ extension CTE.Clause {
 
         /// Prevent materialization: inline the CTE into the main query
         case notMaterialized
+    }
+}
+
+extension StringProtocol {
+    /// Foundation-free equivalent of `trimmingCharacters(in: .whitespacesAndNewlines)`.
+    ///
+    /// `Character.isWhitespace` covers spaces, tabs, newlines, and other Unicode
+    /// whitespace, matching the leading/trailing trim performed by the Foundation API.
+    fileprivate func trimmedWhitespaceAndNewlines() -> String {
+        var slice = Substring(self)
+        while let first = slice.first, first.isWhitespace { slice = slice.dropFirst() }
+        while let last = slice.last, last.isWhitespace { slice = slice.dropLast() }
+        return String(slice)
     }
 }

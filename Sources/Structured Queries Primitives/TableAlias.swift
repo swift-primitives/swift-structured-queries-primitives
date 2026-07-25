@@ -1,4 +1,3 @@
-import Foundation
 import Structured_Queries_Primitives_Support
 
 /// Internal protocol for TableAlias to expose quote information.
@@ -402,12 +401,40 @@ extension QueryFragment {
             switch query.segments[index] {
             case .sql(let sql):
                 query.segments[index] = .sql(
-                    sql.replacingOccurrences(of: T.tableName.quoted(), with: A.aliasName.quoted())
+                    sql.replacingAllOccurrences(
+                        of: T.tableName.quoted(),
+                        with: A.aliasName.quoted()
+                    )
                 )
             case .binding:
                 continue
             }
         }
         return query
+    }
+}
+
+extension String {
+    /// Foundation-free equivalent of `replacingOccurrences(of:with:)`: replaces every
+    /// non-overlapping occurrence of `target`, scanning left to right.
+    fileprivate func replacingAllOccurrences(of target: String, with replacement: String) -> String {
+        guard !target.isEmpty else { return self }
+        let source = Array(self)
+        let needle = Array(target)
+        var result = ""
+        result.reserveCapacity(source.count)
+        var index = source.startIndex
+        while index < source.endIndex {
+            if index + needle.count <= source.endIndex,
+                Array(source[index..<index + needle.count]) == needle
+            {
+                result.append(replacement)
+                index += needle.count
+            } else {
+                result.append(source[index])
+                index += 1
+            }
+        }
+        return result
     }
 }
