@@ -11,7 +11,7 @@ public struct Delete<From: Table, Returning>: Sendable {
     var returning: [QueryFragment] = []
 }
 
-/// A convenience type alias for a non-`RETURNING ``Delete``.
+/// A convenience type alias for a non-`RETURNING` `Delete`.
 public typealias DeleteOf<From: Table> = Delete<From, ()>
 
 extension Delete: Statement {

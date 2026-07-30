@@ -76,13 +76,12 @@ extension Select {
         if select.having.isEmpty {
             select.having = predicates
         } else {
-            select.having = [
-                """
+            let combined: QueryFragment = """
                 (\(select.having.joined(separator: " AND ")) \
                 OR \
                 \(predicates.joined(separator: " AND ")))
                 """
-            ]
+            select.having = [combined]
         }
         return select
     }

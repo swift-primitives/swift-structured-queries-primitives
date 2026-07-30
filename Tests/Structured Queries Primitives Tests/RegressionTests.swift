@@ -142,12 +142,13 @@ struct ReportTests {
                 capture.message.withLock { $0 = message }
             },
             operation: {
-                _ = Row.insert {
-                    Row(count: 1, title: "a")
-                } where: { _ in
-                    SQLQueryExpression(#""title" = 'x'"#, as: Bool.self)
-                }
-                .query
+                _ =
+                    Row.insert {
+                        Row(count: 1, title: "a")
+                    } where: { _ in
+                        SQLQueryExpression(#""title" = 'x'"#, as: Bool.self)
+                    }
+                    .query
             }
         )
         let message = capture.message.withLock { $0 }

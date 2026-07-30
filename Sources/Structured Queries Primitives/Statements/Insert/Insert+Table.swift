@@ -45,7 +45,6 @@ extension Table {
     /// ```
     ///
     /// - Parameters:
-    ///   - conflictResolution: A conflict resolution algorithm.
     ///   - columns: Columns to insert.
     ///   - values: A builder of row values for the given columns.
     ///   - updates: Updates to perform in an upsert clause should the insert conflict with an
@@ -111,7 +110,6 @@ extension Table {
     /// ```
     ///
     /// - Parameters:
-    ///   - conflictResolution: A conflict resolution algorithm.
     ///   - columns: Columns to insert.
     ///   - values: A builder of row values for the given columns.
     ///   - updates: Updates to perform in an upsert clause should the insert conflict with an
@@ -136,7 +134,6 @@ extension Table {
     /// An upsert statement for one or more table rows.
     ///
     /// - Parameters:
-    ///   - conflictResolution: A conflict resolution algorithm.
     ///   - columns: Columns to insert.
     ///   - values: A builder of row values for the given columns.
     ///   - conflictTargets: Indexed columns to target for conflict resolution.
@@ -172,7 +169,6 @@ extension Table {
     /// An upsert statement for one or more table rows.
     ///
     /// - Parameters:
-    ///   - conflictResolution: A conflict resolution algorithm.
     ///   - columns: Columns to insert.
     ///   - values: A builder of row values for the given columns.
     ///   - conflictTargets: Indexed columns to target for conflict resolution.
@@ -251,7 +247,6 @@ extension Table {
     /// ```
     ///
     /// - Parameters:
-    ///   - conflictResolution: A conflict resolution algorithm.
     ///   - columns: Columns to insert.
     ///   - values: A builder of row values for the given columns.
     ///   - updates: Updates to perform in an upsert clause should the insert conflict with an
@@ -279,7 +274,6 @@ extension Table {
     /// An insert statement for one or more table rows.
     ///
     /// - Parameters:
-    ///   - conflictResolution: A conflict resolution algorithm.
     ///   - columns: Columns to insert.
     ///   - values: A builder of row values for the given columns.
     ///   - updates: Updates to perform in an upsert clause should the insert conflict with an
@@ -305,7 +299,6 @@ extension Table {
     /// An upsert statement for one or more table rows.
     ///
     /// - Parameters:
-    ///   - conflictResolution: A conflict resolution algorithm.
     ///   - columns: Columns to insert.
     ///   - values: A builder of row values for the given columns.
     ///   - conflictTargets: Indexed columns to target for conflict resolution.
@@ -345,7 +338,6 @@ extension Table {
     /// An upsert statement for one or more table rows.
     ///
     /// - Parameters:
-    ///   - conflictResolution: A conflict resolution algorithm.
     ///   - columns: Columns to insert.
     ///   - values: A builder of row values for the given columns.
     ///   - conflictTargets: Indexed columns to target for conflict resolution.
@@ -412,7 +404,6 @@ extension Table {
     /// statement.
     ///
     /// - Parameters:
-    ///   - conflictResolution: A conflict resolution algorithm.
     ///   - columns: Columns values to be inserted.
     ///   - selection: A statement that selects the values to be inserted.
     ///   - updates: Updates to perform in an upsert clause should the insert conflict with an
@@ -464,7 +455,6 @@ extension Table {
     /// statement.
     ///
     /// - Parameters:
-    ///   - conflictResolution: A conflict resolution algorithm.
     ///   - columns: Columns values to be inserted.
     ///   - selection: A statement that selects the values to be inserted.
     ///   - updates: Updates to perform in an upsert clause should the insert conflict with an
@@ -495,7 +485,6 @@ extension Table {
     /// statement.
     ///
     /// - Parameters:
-    ///   - conflictResolution: A conflict resolution algorithm.
     ///   - columns: Columns values to be inserted.
     ///   - selection: A statement that selects the values to be inserted.
     ///   - conflictTargets: Indexed columns to target for conflict resolution.
@@ -565,7 +554,6 @@ extension Table {
     /// statement.
     ///
     /// - Parameters:
-    ///   - conflictResolution: A conflict resolution algorithm.
     ///   - columns: Columns values to be inserted.
     ///   - selection: A statement that selects the values to be inserted.
     ///   - conflictTargets: Indexed columns to target for conflict resolution.

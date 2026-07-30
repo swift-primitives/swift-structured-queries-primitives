@@ -93,15 +93,7 @@ extension Seeds.Iterator {
 
         let firstType = type(of: first)
 
-        if let firstType = firstType as? any TableDraft.Type {
-            func insertBatch<T: TableDraft>(_: T.Type) -> SQLQueryExpression<Void> {
-                let batch = Array(seeds.lazy.prefix { $0 is T }.compactMap { $0 as? T })
-                defer { seeds.removeFirst(batch.count) }
-                return SQLQueryExpression(T.PrimaryTable.insert { batch })
-            }
-
-            return insertBatch(firstType)
-        } else {
+        guard let firstType = firstType as? any TableDraft.Type else {
             func insertBatch<T: Table>(_: T.Type) -> SQLQueryExpression<Void> {
                 let batch = Array(seeds.lazy.prefix { $0 is T }.compactMap { $0 as? T })
                 defer { seeds.removeFirst(batch.count) }
@@ -110,6 +102,13 @@ extension Seeds.Iterator {
 
             return insertBatch(firstType)
         }
+        func insertBatch<T: TableDraft>(_: T.Type) -> SQLQueryExpression<Void> {
+            let batch = Array(seeds.lazy.prefix { $0 is T }.compactMap { $0 as? T })
+            defer { seeds.removeFirst(batch.count) }
+            return SQLQueryExpression(T.PrimaryTable.insert { batch })
+        }
+
+        return insertBatch(firstType)
     }
 }
 

@@ -13,6 +13,8 @@ public protocol QueryDecodable: _OptionalPromotable {
     /// corrupted or otherwise invalid.
     ///
     /// - Parameter decoder: The decoder to read data from.
+    /// - Throws: An error from the decoder's underlying database driver, or an `OverflowError` /
+    ///   `DataCorruptedError` if the decoded data is invalid for this type.
     init(decoder: inout some QueryDecoder) throws
 }
 

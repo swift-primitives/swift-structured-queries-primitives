@@ -9,9 +9,7 @@ extension Where {
 
     /// An update statement for the filtered table.
     ///
-    /// - Parameters:
-    ///   - conflictResolution: A conflict resolution algorithm.
-    ///   - updates: A closure describing column-wise updates to perform.
+    /// - Parameter updates: A closure describing column-wise updates to perform.
     /// - Returns: An update statement.
     public func update(
         set updates: (inout Updates<From>) -> Void

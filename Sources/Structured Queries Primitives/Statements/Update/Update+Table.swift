@@ -29,9 +29,7 @@ extension Table {
     /// The syntax `$0.title += "!"` is translated into the equivalent SQL of
     /// `"title" = "title" || 'Get haircut'`
     ///
-    /// - Parameters:
-    ///   - conflictResolution: A conflict resolution algorithm.
-    ///   - updates: A closure describing column-wise updates to perform.
+    /// - Parameter updates: A closure describing column-wise updates to perform.
     /// - Returns: An update statement.
     public static func update(
         set updates: (inout Updates<Self>) -> Void

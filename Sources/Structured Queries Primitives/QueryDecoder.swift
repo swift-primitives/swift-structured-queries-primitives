@@ -13,60 +13,70 @@ public protocol QueryDecoder {
     ///
     /// - Parameter columnType: The type to decode as.
     /// - Returns: A value of the requested type, or `nil` if the column is `NULL`.
+    /// - Throws: Any error the underlying database driver reports while decoding the column.
     mutating func decode(_ columnType: [Byte].Type) throws -> [Byte]?
 
     /// Decodes a single value of the given type from the current column.
     ///
     /// - Parameter columnType: The type to decode as.
     /// - Returns: A value of the requested type, or `nil` if the column is `NULL`.
+    /// - Throws: Any error the underlying database driver reports while decoding the column.
     mutating func decode(_ columnType: Double.Type) throws -> Double?
 
     /// Decodes a single value of the given type from the current column.
     ///
     /// - Parameter columnType: The type to decode as.
     /// - Returns: A value of the requested type, or `nil` if the column is `NULL`.
+    /// - Throws: Any error the underlying database driver reports while decoding the column.
     mutating func decode(_ columnType: Int64.Type) throws -> Int64?
 
     /// Decodes a single value of the given type from the current column.
     ///
     /// - Parameter columnType: The type to decode as.
     /// - Returns: A value of the requested type, or `nil` if the column is `NULL`.
+    /// - Throws: Any error the underlying database driver reports while decoding the column.
     mutating func decode(_ columnType: UInt64.Type) throws -> UInt64?
 
     /// Decodes a single value of the given type from the current column.
     ///
     /// - Parameter columnType: The type to decode as.
     /// - Returns: A value of the requested type, or `nil` if the column is `NULL`.
+    /// - Throws: Any error the underlying database driver reports while decoding the column.
     mutating func decode(_ columnType: String.Type) throws -> String?
 
     /// Decodes a single value of the given type from the current column.
     ///
     /// - Parameter columnType: The type to decode as.
     /// - Returns: A value of the requested type, or `nil` if the column is `NULL`.
+    /// - Throws: Any error the underlying database driver reports while decoding the column.
     mutating func decode(_ columnType: Bool.Type) throws -> Bool?
 
     /// Decodes a single value of the given type from the current column.
     ///
     /// - Parameter columnType: The type to decode as.
     /// - Returns: A value of the requested type, or `nil` if the column is `NULL`.
+    /// - Throws: Any error the underlying database driver reports while decoding the column.
     mutating func decode(_ columnType: Int.Type) throws -> Int?
 
     /// Decodes a single value of the given type from the current column.
     ///
     /// - Parameter columnType: The type to decode as.
     /// - Returns: A value of the requested type, or `nil` if the column is `NULL`.
+    /// - Throws: Any error the underlying database driver reports while decoding the column.
     mutating func decode(_ columnType: Instant.Type) throws -> Instant?
 
     /// Decodes a single value of the given type from the current column.
     ///
     /// - Parameter columnType: The type to decode as.
     /// - Returns: A value of the requested type, or `nil` if the column is `NULL`.
+    /// - Throws: Any error the underlying database driver reports while decoding the column.
     mutating func decode(_ columnType: QueryBinding.UUID.Type) throws -> QueryBinding.UUID?
 
     /// Decodes a single value of the given type starting from the current column.
     ///
     /// - Parameter columnType: The type to decode as.
     /// - Returns: A value of the requested type, or `nil` if the column is `NULL`.
+    /// - Throws: Any error the underlying database driver reports while decoding the column.
     mutating func decode<T: QueryRepresentable>(_ columnType: T.Type) throws -> T.QueryOutput?
 }
 // swiftlint:enable typed_throws_required
@@ -81,6 +91,7 @@ extension QueryDecoder {
     ///
     /// - Parameter columnType: The type to decode as.
     /// - Returns: A value of the requested type, or `nil` if the column is `NULL`.
+    /// - Throws: Any error the underlying database driver reports while decoding the column.
     @inlinable
     @inline(__always)
     public mutating func decode<T: QueryRepresentable>(
@@ -93,6 +104,7 @@ extension QueryDecoder {
     ///
     /// - Parameter columnTypes: The types to decode as.
     /// - Returns: A tuple of the requested types.
+    /// - Throws: Any error the underlying database driver reports while decoding the columns.
     @inlinable
     @inline(__always)
     public mutating func decodeColumns<each T: QueryRepresentable>(

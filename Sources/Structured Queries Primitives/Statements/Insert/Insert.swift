@@ -207,5 +207,5 @@ extension Insert: Statement {
     }
 }
 
-/// A convenience type alias for a non-`RETURNING ``Insert``.
+/// A convenience type alias for a non-`RETURNING` `Insert`.
 public typealias InsertOf<Into: Table> = Insert<Into, ()>

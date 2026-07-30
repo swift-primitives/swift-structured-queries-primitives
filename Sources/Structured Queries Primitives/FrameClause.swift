@@ -1,4 +1,4 @@
-/// Frame bounds for window function frame clauses
+/// Frame bounds for window function frame clauses.
 ///
 /// Frame bounds specify the starting or ending point of a window frame.
 /// They can be used with ROWS, RANGE, or GROUPS frame types.
@@ -32,7 +32,7 @@ public enum FrameBound: Sendable {
 }
 
 extension FrameBound {
-    /// Generate SQL fragment for this frame bound
+    /// Generate SQL fragment for this frame bound.
     internal var queryFragment: QueryFragment {
         switch self {
         case .unboundedPreceding:
@@ -55,7 +55,7 @@ extension FrameBound {
     }
 }
 
-/// Frame bounds specification for window functions
+/// Frame bounds specification for window functions.
 ///
 /// Defines either a BETWEEN...AND range or a shorthand single bound.
 public enum FrameBounds: Sendable {
@@ -71,7 +71,7 @@ public enum FrameBounds: Sendable {
 }
 
 extension FrameBounds {
-    /// Generate SQL fragment for these frame bounds
+    /// Generate SQL fragment for these frame bounds.
     internal func queryFragment(frameType: String) -> QueryFragment {
         switch self {
         case .between(let start, let end):
@@ -87,7 +87,7 @@ extension FrameBounds {
 // MARK: - WindowSpec Frame Extensions
 
 extension WindowSpec {
-    /// Add a ROWS frame clause to this window specification
+    /// Add a ROWS frame clause to this window specification.
     ///
     /// ROWS frame type uses physical row positions relative to the current row.
     /// This is the most intuitive frame type for most use cases.
@@ -136,7 +136,7 @@ extension WindowSpec {
         return copy
     }
 
-    /// Add a ROWS frame clause using shorthand syntax
+    /// Add a ROWS frame clause using shorthand syntax.
     ///
     /// This is shorthand for ROWS BETWEEN <bound> AND CURRENT ROW.
     ///
@@ -164,7 +164,7 @@ extension WindowSpec {
         return copy
     }
 
-    /// Add a RANGE frame clause to this window specification
+    /// Add a RANGE frame clause to this window specification.
     ///
     /// RANGE frame type uses logical value ranges based on the ORDER BY column.
     /// Rows with equal ORDER BY values are treated as peers.
@@ -196,7 +196,7 @@ extension WindowSpec {
         return copy
     }
 
-    /// Add a RANGE frame clause using shorthand syntax
+    /// Add a RANGE frame clause using shorthand syntax.
     ///
     /// This is shorthand for RANGE BETWEEN <bound> AND CURRENT ROW.
     ///
@@ -208,7 +208,7 @@ extension WindowSpec {
         return copy
     }
 
-    /// Add a GROUPS frame clause to this window specification
+    /// Add a GROUPS frame clause to this window specification.
     ///
     /// GROUPS frame type operates on peer groups - sets of rows with equal ORDER BY values.
     /// This is useful when you want to include or exclude entire groups of tied rows.
@@ -238,7 +238,7 @@ extension WindowSpec {
         return copy
     }
 
-    /// Add a GROUPS frame clause using shorthand syntax
+    /// Add a GROUPS frame clause using shorthand syntax.
     ///
     /// This is shorthand for GROUPS BETWEEN <bound> AND CURRENT ROW.
     ///

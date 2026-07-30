@@ -273,11 +273,10 @@ where Base.TableColumns: PrimaryKeyedTableDefinition {
     public var queryFragment: QueryFragment {
         Base.columns.primaryKey._names
             .map {
-                if Name.shouldQuote {
-                    return "\(quote: Name.aliasName).\(quote: $0)"
-                } else {
+                guard Name.shouldQuote else {
                     return "\(raw: Name.aliasName).\(quote: $0)"
                 }
+                return "\(quote: Name.aliasName).\(quote: $0)"
             }
             .joined(separator: ", ")
     }

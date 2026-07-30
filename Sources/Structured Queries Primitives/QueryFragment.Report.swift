@@ -20,8 +20,10 @@ extension QueryFragment.Report {
     /// underlying defect is fixed upstream and the task local can hold the function type
     /// directly again.
     public struct Handler: Sendable {
+        /// The closure invoked with the diagnostic message.
         public let run: @Sendable (String) -> Void
 
+        /// Creates a handler that invokes the given closure with the diagnostic message.
         public init(_ run: @escaping @Sendable (String) -> Void) {
             self.run = run
         }

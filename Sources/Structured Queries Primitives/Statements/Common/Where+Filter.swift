@@ -81,13 +81,12 @@ extension Where {
         guard !predicates.isEmpty else { return other }
         guard !other.predicates.isEmpty else { return self }
         var `where` = self
-        `where`.predicates = [
-            """
+        let combined: QueryFragment = """
             (\(`where`.predicates.joined(separator: " AND "))) \
             AND \
             (\(other.predicates.joined(separator: " AND ")))
             """
-        ]
+        `where`.predicates = [combined]
         return `where`
     }
 
@@ -99,13 +98,12 @@ extension Where {
         guard !predicates.isEmpty else { return other }
         guard !other.predicates.isEmpty else { return self }
         var `where` = self
-        `where`.predicates = [
-            """
+        let combined: QueryFragment = """
             (\(`where`.predicates.joined(separator: " AND "))) \
             OR \
             (\(other.predicates.joined(separator: " AND ")))
             """
-        ]
+        `where`.predicates = [combined]
         return `where`
     }
 

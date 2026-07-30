@@ -89,13 +89,12 @@ extension Select {
         if select.where.isEmpty {
             select.where = other.predicates
         } else {
-            select.where = [
-                """
+            let combined: QueryFragment = """
                 (\(select.where.joined(separator: " AND ")) \
                 OR \
                 \(other.predicates.joined(separator: " AND ")))
                 """
-            ]
+            select.where = [combined]
         }
         return select
     }

@@ -13,7 +13,7 @@ public struct Update<From: Table, Returning>: Sendable {
     var returning: [QueryFragment] = []
 }
 
-/// A convenience type alias for a non-`RETURNING ``Update``.
+/// A convenience type alias for a non-`RETURNING` `Update`.
 public typealias UpdateOf<Base: Table> = Update<Base, ()>
 
 extension Update: Statement {

@@ -87,11 +87,10 @@ extension UInt32: QueryBindable {
 extension UInt64: QueryBindable {
     /// The query binding representing this unsigned 64-bit integer value, or an overflow error.
     public var queryBinding: QueryBinding {
-        if self > UInt64(Int64.max) {
-            return .invalid(OverflowError())
-        } else {
+        guard self > UInt64(Int64.max) else {
             return .int(Int64(self))
         }
+        return .invalid(OverflowError())
     }
 }
 

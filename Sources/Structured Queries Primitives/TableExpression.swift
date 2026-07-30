@@ -11,13 +11,12 @@ public protocol TableExpression<QueryValue>: QueryExpression where QueryValue: T
 extension TableExpression {
     /// The SQL fragment listing this expression's columns, aliased when selecting.
     public var queryFragment: QueryFragment {
-        if _isSelecting {
-            return zip(allColumns, QueryValue.TableColumns.allColumns)
-                .map { "\($0) AS \(quote: $1.name)" }
-                .joined(separator: ", ")
-        } else {
+        guard _isSelecting else {
             return allColumns.map(\.queryFragment).joined(separator: ", ")
         }
+        return zip(allColumns, QueryValue.TableColumns.allColumns)
+            .map { "\($0) AS \(quote: $1.name)" }
+            .joined(separator: ", ")
     }
 
     /// The number of columns in this table's expression, forwarded from its query value type.
