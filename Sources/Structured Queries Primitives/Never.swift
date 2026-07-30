@@ -15,10 +15,15 @@ extension Never: Table {
     /// The table name used to satisfy `Table` conformance for the uninhabited `Never` type.
     public static let tableName = "nevers"
 
+    // swiftlint:disable typed_throws_required
+    // reason: `init(decoder:) throws` mirrors the `QueryDecodable` protocol requirement
+    // (heterogeneous-backend decode errors). [API-ERR-006] exception
+    // (rule-exemptions protocol-requirement shape).
     /// Unreachable initializer; decoding a `Never` value always throws.
     public init(decoder: inout some QueryDecoder) throws {
         throw NotDecodable()
     }
+    // swiftlint:enable typed_throws_required
 
     private struct NotDecodable: Swift.Error {}
 }

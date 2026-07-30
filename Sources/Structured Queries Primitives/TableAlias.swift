@@ -340,6 +340,11 @@ extension TableAlias: QueryBindable where Base: QueryBindable {
     }
 }
 
+// swiftlint:disable typed_throws_required
+// reason: `init(decoder:) throws` mirrors the `QueryDecodable` protocol requirement
+// (heterogeneous-backend decode errors); `init(from:) throws` / `encode(to:) throws`
+// below mirror the stdlib `Decodable`/`Encodable` requirement signatures. [API-ERR-006]
+// exception (rule-exemptions protocol-requirement shape).
 extension TableAlias: QueryDecodable where Base: QueryDecodable {
     /// Creates an aliased table by decoding the base value from the given decoder.
     public init(decoder: inout some QueryDecoder) throws {
@@ -390,6 +395,7 @@ extension TableAlias: Encodable where Base: Encodable {
         }
     }
 }
+// swiftlint:enable typed_throws_required
 
 extension QueryFragment {
     fileprivate func replacingOccurrences<T: Table, A: AliasName>(

@@ -39,6 +39,10 @@ extension Optional: QueryBindable where Wrapped: QueryBindable {
     }
 }
 
+// swiftlint:disable typed_throws_required
+// reason: `init(decoder:) throws` mirrors the `QueryDecodable` protocol requirement
+// (heterogeneous-backend decode errors). [API-ERR-006] exception
+// (rule-exemptions protocol-requirement shape).
 extension Optional: QueryDecodable where Wrapped: QueryDecodable {
     /// Decodes an optional value from the given decoder.
     @inlinable
@@ -50,6 +54,7 @@ extension Optional: QueryDecodable where Wrapped: QueryDecodable {
         }
     }
 }
+// swiftlint:enable typed_throws_required
 
 extension Optional: QueryExpression where Wrapped: QueryExpression {
     /// The optional query value type of the wrapped expression.

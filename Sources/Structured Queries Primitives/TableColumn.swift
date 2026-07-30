@@ -90,10 +90,15 @@ public struct TableColumn<Root: Table, Value: QueryRepresentable & QueryBindable
         self.keyPath = keyPath
     }
 
+    // swiftlint:disable typed_throws_required
+    // reason: `decode(_:) throws` mirrors the `QueryDecodable` protocol requirement
+    // (heterogeneous-backend decode errors). [API-ERR-006] exception
+    // (rule-exemptions protocol-requirement shape).
     /// Decodes this table column's value from the given query decoder.
     public func decode(_ decoder: inout some QueryDecoder) throws -> Value.QueryOutput {
         try Value(decoder: &decoder).queryOutput
     }
+    // swiftlint:enable typed_throws_required
 
     /// The SQL fragment referencing this column, qualified by its table.
     public var queryFragment: QueryFragment {
@@ -203,10 +208,15 @@ public struct GeneratedColumn<Root: Table, Value: QueryRepresentable & QueryBind
         self.keyPath = keyPath
     }
 
+    // swiftlint:disable typed_throws_required
+    // reason: `decode(_:) throws` mirrors the `QueryDecodable` protocol requirement
+    // (heterogeneous-backend decode errors). [API-ERR-006] exception
+    // (rule-exemptions protocol-requirement shape).
     /// Decodes this generated column's value from the given query decoder.
     public func decode(_ decoder: inout some QueryDecoder) throws -> Value.QueryOutput {
         try Value(decoder: &decoder).queryOutput
     }
+    // swiftlint:enable typed_throws_required
 
     /// The SQL fragment referencing this generated column, qualified by its table.
     public var queryFragment: QueryFragment {

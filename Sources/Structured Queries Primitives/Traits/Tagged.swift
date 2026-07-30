@@ -9,12 +9,17 @@ extension Tagged: QueryBindable where Tag: ~Copyable & ~Escapable, Underlying: Q
     }
 }
 
+// swiftlint:disable typed_throws_required
+// reason: `init(decoder:) throws` mirrors the `QueryDecodable` protocol requirement
+// (heterogeneous-backend decode errors). [API-ERR-006] exception
+// (rule-exemptions protocol-requirement shape).
 extension Tagged: QueryDecodable where Tag: ~Copyable & ~Escapable, Underlying: QueryDecodable {
     /// Decodes a tagged value by decoding its underlying value.
     public init(decoder: inout some QueryDecoder) throws {
         self.init(_unchecked: try Underlying(decoder: &decoder))
     }
 }
+// swiftlint:enable typed_throws_required
 
 extension Tagged: QueryExpression where Tag: ~Copyable & ~Escapable, Underlying: QueryExpression {
     /// The query fragment for this tagged value, forwarded from the underlying value.

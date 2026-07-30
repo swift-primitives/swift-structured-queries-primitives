@@ -11,6 +11,11 @@ public import Time_Primitives
 // This target is a leaf: no core target depends on it, so Foundation never
 // enters the core's dependency closure.
 
+// swiftlint:disable typed_throws_required
+// reason: `init(decoder:) throws` mirrors the `QueryDecodable` protocol requirement
+// (see QueryDecodable.swift), which is untyped for the same heterogeneous-backend
+// reason. [API-ERR-006] exception (rule-exemptions protocol-requirement shape).
+
 extension Data: QueryBindable {
     /// This value's binding, encoded as a blob.
     public var queryBinding: QueryBinding {
@@ -90,6 +95,8 @@ extension Foundation.Decimal: QueryBindable {
         self = value
     }
 }
+
+// swiftlint:enable typed_throws_required
 
 // MARK: - QueryBinding.UUID <-> Foundation.UUID
 
