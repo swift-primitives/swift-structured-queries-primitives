@@ -1,5 +1,10 @@
 public import Time_Primitives
 
+// swiftlint:disable typed_throws_required
+// reason: `init(decoder:) throws` mirrors `Decodable.init(from:) throws` — the decoder is an
+// out-of-repo backend driver whose own decode errors, plus this file's `OverflowError` /
+// `DataCorruptedError`, are heterogeneous by design. [API-ERR-006] exception
+// (rule-exemptions protocol-requirement shape).
 /// A type that can decode itself from a query.
 public protocol QueryDecodable: _OptionalPromotable {
     /// Creates a new instance by decoding from the given decoder.
@@ -194,6 +199,8 @@ extension QueryDecodable where Self: RawRepresentable, RawValue: QueryDecodable 
         self = rawRepresentable
     }
 }
+
+// swiftlint:enable typed_throws_required
 
 @usableFromInline
 struct DataCorruptedError: Swift.Error {

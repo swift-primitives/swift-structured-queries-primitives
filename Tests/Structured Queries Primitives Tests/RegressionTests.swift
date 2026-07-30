@@ -137,16 +137,19 @@ struct ReportTests {
 
     @Test func `Invalid update filter reports through the bound handler instead of trapping`() {
         let capture = Capture()
-        QueryFragment.Report.$invalid.withValue({ message in
-            capture.message.withLock { $0 = message }
-        }) {
-            _ = Row.insert {
-                Row(count: 1, title: "a")
-            } where: { _ in
-                SQLQueryExpression(#""title" = 'x'"#, as: Bool.self)
+        QueryFragment.Report.$invalid.withValue(
+            { message in
+                capture.message.withLock { $0 = message }
+            },
+            operation: {
+                _ = Row.insert {
+                    Row(count: 1, title: "a")
+                } where: { _ in
+                    SQLQueryExpression(#""title" = 'x'"#, as: Bool.self)
+                }
+                .query
             }
-            .query
-        }
+        )
         let message = capture.message.withLock { $0 }
         #expect(message?.contains("invalid update 'where'") == true)
     }

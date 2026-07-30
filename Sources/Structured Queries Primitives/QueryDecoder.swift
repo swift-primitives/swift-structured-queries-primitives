@@ -1,13 +1,18 @@
 public import Byte_Primitives
 public import Time_Primitives
 
+// swiftlint:disable typed_throws_required
+// reason: `QueryDecoder` is implemented by heterogeneous, out-of-repo backend drivers (SQLite,
+// Postgres, ...), each surfacing its own decode-failure error domain; an untyped `throws` here
+// mirrors the same protocol-requirement shape as `Decodable.init(from:) throws`. [API-ERR-006]
+// exception (rule-exemptions protocol-requirement shape).
 /// A type that can decode values from a database connection into in-memory representations.
 public protocol QueryDecoder {
+    // swiftlint:disable:next discouraged_optional_collection
     /// Decodes a single value of the given type from the current column.
     ///
     /// - Parameter columnType: The type to decode as.
     /// - Returns: A value of the requested type, or `nil` if the column is `NULL`.
-    // swiftlint:disable:next discouraged_optional_collection
     mutating func decode(_ columnType: [Byte].Type) throws -> [Byte]?
 
     /// Decodes a single value of the given type from the current column.
@@ -64,8 +69,14 @@ public protocol QueryDecoder {
     /// - Returns: A value of the requested type, or `nil` if the column is `NULL`.
     mutating func decode<T: QueryRepresentable>(_ columnType: T.Type) throws -> T.QueryOutput?
 }
+// swiftlint:enable typed_throws_required
 
 extension QueryDecoder {
+    // swiftlint:disable typed_throws_required
+    // reason: these forward to `QueryDecodable.init(decoder:) throws`, itself untyped for the
+    // same heterogeneous-backend reason as the `QueryDecoder` requirement above.
+    // [API-ERR-006] exception (rule-exemptions protocol-requirement shape).
+
     /// Decodes a single value of the given type starting from the current column.
     ///
     /// - Parameter columnType: The type to decode as.
@@ -98,6 +109,7 @@ extension QueryDecoder {
     ) throws -> T? {
         try T?(decoder: &self)?.queryOutput
     }
+    // swiftlint:enable typed_throws_required
 }
 
 /// The errors that can occur when decoding a query result column.
