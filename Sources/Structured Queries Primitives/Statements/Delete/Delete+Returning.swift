@@ -1,5 +1,7 @@
 import Structured_Queries_Primitives_Support
 
+// Overload set disambiguated by generic constraints and @_disfavoredOverload ranking; renaming would break the SQL-mirroring API.
+// swift-format-ignore: AmbiguousTrailingClosureOverload
 extension Delete {
     /// Adds a returning clause to a delete statement.
     ///

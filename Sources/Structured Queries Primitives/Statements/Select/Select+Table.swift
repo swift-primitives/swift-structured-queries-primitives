@@ -1,3 +1,5 @@
+// Overload set disambiguated by generic constraints and @_disfavoredOverload ranking; renaming would break the SQL-mirroring API. (Covers both the select(_:) and group(by:) overload groups in this file-spanning extension.)
+// swift-format-ignore: AmbiguousTrailingClosureOverload
 extension Table {
     /// A select statement for a column of this table.
     ///

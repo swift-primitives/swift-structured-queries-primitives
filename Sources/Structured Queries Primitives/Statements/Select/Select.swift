@@ -111,6 +111,8 @@ public enum _DistinctClause: Sendable {
     case on([QueryFragment])
 }
 
+// Overload set disambiguated by generic constraints and @_disfavoredOverload ranking; renaming would break the SQL-mirroring API.
+// swift-format-ignore: AmbiguousTrailingClosureOverload
 extension Select {
     init(isEmpty: Bool = false, where: [QueryFragment] = []) {
         self.isEmpty = isEmpty

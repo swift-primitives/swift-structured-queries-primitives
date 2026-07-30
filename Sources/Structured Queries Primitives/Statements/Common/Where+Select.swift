@@ -1,3 +1,5 @@
+// Overload set disambiguated by generic constraints and @_disfavoredOverload ranking; renaming would break the SQL-mirroring API.
+// swift-format-ignore: AmbiguousTrailingClosureOverload
 extension Where {
     /// A select statement for a column of the filtered table.
     ///

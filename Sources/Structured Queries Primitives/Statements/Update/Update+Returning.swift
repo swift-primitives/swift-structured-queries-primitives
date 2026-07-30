@@ -1,3 +1,5 @@
+// Overload set disambiguated by generic constraints and @_disfavoredOverload ranking; renaming would break the SQL-mirroring API.
+// swift-format-ignore: AmbiguousTrailingClosureOverload
 extension Update {
     /// Adds a returning clause to an update statement.
     ///

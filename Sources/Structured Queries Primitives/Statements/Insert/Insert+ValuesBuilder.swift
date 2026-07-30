@@ -18,6 +18,7 @@ public enum InsertValuesBuilder<Value> {
                     // `Value.TableColumns.writableColumns` above, so opening the
                     // existential against `Value` is always safe. force_cast is the
                     // "open existential" idiom used throughout this builder.
+                    // swift-format-ignore: NeverForceUnwrap
                     // swiftlint:disable:next force_cast
                     Member(queryOutput: (value as! Root)[keyPath: column.keyPath]).queryFragment
                 }
@@ -43,6 +44,7 @@ public enum InsertValuesBuilder<Value> {
                     // from `Value.Draft.TableColumns.writableColumns` above, so opening
                     // the existential against `Value.Draft` is always safe. force_cast
                     // is the "open existential" idiom used throughout this builder.
+                    // swift-format-ignore: NeverForceUnwrap
                     // swiftlint:disable:next force_cast
                     Member(queryOutput: (value as! Root)[keyPath: column.keyPath]).queryFragment
                 }

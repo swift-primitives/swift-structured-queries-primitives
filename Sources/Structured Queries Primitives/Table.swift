@@ -127,6 +127,7 @@ extension Table {
             // `TableColumns.allColumns` below, so opening the existential against
             // `Self` is always safe. force_cast is the "open existential" idiom
             // used throughout this file's column-erasure machinery.
+            // swift-format-ignore: NeverForceUnwrap
             // swiftlint:disable:next force_cast
             let value = Value(queryOutput: (self as! Root)[keyPath: column.keyPath])
             return "\(value) AS \(quote: column.name)"
@@ -141,6 +142,7 @@ extension Table {
             // `TableColumns.allColumns` below, so opening the existential against
             // `Self` is always safe. force_cast is the "open existential" idiom
             // used throughout this file's column-erasure machinery.
+            // swift-format-ignore: NeverForceUnwrap
             // swiftlint:disable:next force_cast
             Value(queryOutput: (self as! Root)[keyPath: column.keyPath]).queryFragment
         }

@@ -25,6 +25,8 @@ public enum InsertValues: Sendable {
     case select(QueryFragment)
 }
 
+// Overload set disambiguated by generic constraints and @_disfavoredOverload ranking; renaming would break the SQL-mirroring API.
+// swift-format-ignore: AmbiguousTrailingClosureOverload
 /// An `INSERT` statement.
 ///
 /// This type of statement is returned from the

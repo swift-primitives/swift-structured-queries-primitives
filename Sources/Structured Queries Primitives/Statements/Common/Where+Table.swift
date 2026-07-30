@@ -1,3 +1,5 @@
+// Overload set disambiguated by generic constraints and @_disfavoredOverload ranking; renaming would break the SQL-mirroring API.
+// swift-format-ignore: AmbiguousTrailingClosureOverload
 extension Table {
     /// A where clause filtered by a Boolean key path.
     ///

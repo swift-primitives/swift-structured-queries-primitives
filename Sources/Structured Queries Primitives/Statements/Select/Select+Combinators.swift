@@ -14,6 +14,10 @@ extension Select {
     {
         var iterator = columns.makeIterator()
         func next<Element>() -> SQLQueryExpression<Element> {
+            // The parameter pack's arity guarantees `iterator` has an element for
+            // every call `transform` makes to `next()` below, so this force-unwrap
+            // is always safe.
+            // swift-format-ignore: NeverForceUnwrap
             SQLQueryExpression(iterator.next()!)
         }
         return Select<(repeat (each C2).QueryValue), From, Joins>(
