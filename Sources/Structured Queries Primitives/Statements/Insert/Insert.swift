@@ -198,7 +198,7 @@ extension Insert: Statement {
                 \(query)
                 """
             if let report = QueryFragment.Report.invalid {
-                report(message)
+                report.run(message)
             } else {
                 assertionFailure(message)
             }

@@ -138,7 +138,7 @@ struct ReportTests {
     @Test func `Invalid update filter reports through the bound handler instead of trapping`() {
         let capture = Capture()
         QueryFragment.Report.$invalid.withValue(
-            { message in
+            .init { message in
                 capture.message.withLock { $0 = message }
             },
             operation: {
