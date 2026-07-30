@@ -35,6 +35,7 @@ extension CTE.Clause {
             switch materialization {
             case .materialized:
                 fragment.append(" AS MATERIALIZED")
+
             case .notMaterialized:
                 fragment.append(" AS NOT MATERIALIZED")
             }

@@ -37,6 +37,7 @@ extension QueryFragment {
             switch $0 {
             case .sql(let sql):
                 sql.isEmpty
+
             case .binding:
                 false
             }
@@ -76,6 +77,7 @@ extension QueryFragment {
             switch segment {
             case .sql(let fragment):
                 sql.append(fragment)
+
             case .binding(let binding):
                 defer { offset += 1 }
                 sql.append(template(offset))
@@ -93,6 +95,7 @@ extension QueryFragment: CustomDebugStringConvertible {
             switch segment {
             case .sql(let sql):
                 debugDescription.append(sql)
+
             case .binding(let binding):
                 debugDescription.append(binding.debugDescription)
             }

@@ -406,6 +406,7 @@ extension QueryFragment {
                         with: A.aliasName.quoted()
                     )
                 )
+
             case .binding:
                 continue
             }

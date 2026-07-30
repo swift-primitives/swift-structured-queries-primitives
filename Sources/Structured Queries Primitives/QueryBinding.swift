@@ -104,51 +104,72 @@ extension QueryBinding: CustomDebugStringConvertible {
                 .dropLast()
                 .dropFirst()
                 .quoted(.text)
+
         case .date(let date):
             return date.sqlTimestampLiteral.quoted(.text)
+
         case .double(let value):
             return "\(value)"
+
         case .int(let value):
             return "\(value)"
+
         case .null:
             return "NULL"
+
         case .text(let string):
             return string.quoted(.text)
+
         case .uuid(let uuid):
             return uuid.hyphenatedLowercaseHex.quoted(.text)
+
         case .jsonb(let data):
             return String(decoding: data.map(\.underlying), as: UTF8.self).quoted(.text)
+
         case .decimal(let digits):
             // Unquoted: a SQL numeric literal, not a text literal.
             return digits
+
         case .boolArray(let values):
             return "ARRAY[\(values.map { $0 ? "true" : "false" }.joined(separator: ", "))]"
+
         case .stringArray(let values):
             return "ARRAY[\(values.map { $0.quoted(.text) }.joined(separator: ", "))]"
+
         case .intArray(let values):
             return "ARRAY[\(values.map { "\($0)" }.joined(separator: ", "))]"
+
         case .int16Array(let values):
             return "ARRAY[\(values.map { "\($0)" }.joined(separator: ", "))]"
+
         case .int32Array(let values):
             return "ARRAY[\(values.map { "\($0)" }.joined(separator: ", "))]"
+
         case .int64Array(let values):
             return "ARRAY[\(values.map { "\($0)" }.joined(separator: ", "))]"
+
         case .floatArray(let values):
             return "ARRAY[\(values.map { "\($0)" }.joined(separator: ", "))]"
+
         case .doubleArray(let values):
             return "ARRAY[\(values.map { "\($0)" }.joined(separator: ", "))]"
+
         case .uuidArray(let values):
             return
                 "ARRAY[\(values.map { $0.hyphenatedLowercaseHex.quoted(.text) }.joined(separator: ", "))]"
+
         case .dateArray(let values):
             return
                 "ARRAY[\(values.map { $0.sqlTimestampLiteral.quoted(.text) }.joined(separator: ", "))]"
+
         case .genericArray(let bindings):
             return "ARRAY[\(bindings.map { $0.debugDescription }.joined(separator: ", "))]"
+
         case .invalid(let error):
             // `localizedDescription` is Foundation surface on `any Error`; the
             // Foundation-free equivalent for an arbitrary error is `String(describing:)`.
             return "<invalid: \(String(describing: error.underlyingError))>"
+
         case .bool(let bool):
             return bool ? "true" : "false"
         }
