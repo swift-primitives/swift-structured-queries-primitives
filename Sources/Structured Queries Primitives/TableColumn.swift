@@ -33,7 +33,7 @@ extension TableColumnExpression {
     public var _names: [String] { [name] }
 }
 
-/// A type representing a _writable_ table column, _i.e._ not a generated column.
+/// A type representing a _writable_ table column, that is, not a generated column.
 public protocol WritableTableColumnExpression<Root, Value>: TableColumnExpression {
     func _aliased<Name: AliasName>(
         _ alias: Name.Type
