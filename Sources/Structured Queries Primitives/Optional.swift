@@ -144,6 +144,10 @@ extension Optional.TableColumns where Wrapped: Table {
         ) -> any TableColumnExpression {
             guard let column = column as? TableColumn<Wrapped, Value>
             else {
+                // `TableColumnExpression` is a closed type-erasure surface (see its
+                // doc comment: "You should not conform to this protocol directly"),
+                // so a non-`TableColumn` column here must be a `GeneratedColumn`.
+                // swiftlint:disable:next force_cast
                 let column = column as! GeneratedColumn<Wrapped, Value>
                 return GeneratedColumn<Optional, Value?>(
                     column.name,
@@ -165,6 +169,11 @@ extension Optional.TableColumns where Wrapped: Table {
         func open<Root, Value>(
             _ column: some WritableTableColumnExpression<Root, Value>
         ) -> any WritableTableColumnExpression {
+            // `Root` is guaranteed to be `Wrapped` here: `column` is drawn from
+            // `Wrapped.TableColumns.writableColumns` below, and `TableColumn` is the
+            // only `WritableTableColumnExpression` conformer (`GeneratedColumn` is
+            // read-only), so this cast is always safe.
+            // swiftlint:disable:next force_cast
             let column = column as! TableColumn<Wrapped, Value>
             return TableColumn<Optional, Value?>(
                 column.name,

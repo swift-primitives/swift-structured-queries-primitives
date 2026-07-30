@@ -14,6 +14,11 @@ public enum InsertValuesBuilder<Value> {
                 func open<Root, Member>(
                     _ column: some WritableTableColumnExpression<Root, Member>
                 ) -> QueryFragment {
+                    // `Root` is guaranteed to be `Value` here: `column` is drawn from
+                    // `Value.TableColumns.writableColumns` above, so opening the
+                    // existential against `Value` is always safe. force_cast is the
+                    // "open existential" idiom used throughout this builder.
+                    // swiftlint:disable:next force_cast
                     Member(queryOutput: (value as! Root)[keyPath: column.keyPath]).queryFragment
                 }
                 valueFragment.append(open(column))
@@ -34,6 +39,11 @@ public enum InsertValuesBuilder<Value> {
                 func open<Root, Member>(
                     _ column: some WritableTableColumnExpression<Root, Member>
                 ) -> QueryFragment {
+                    // `Root` is guaranteed to be `Value.Draft` here: `column` is drawn
+                    // from `Value.Draft.TableColumns.writableColumns` above, so opening
+                    // the existential against `Value.Draft` is always safe. force_cast
+                    // is the "open existential" idiom used throughout this builder.
+                    // swiftlint:disable:next force_cast
                     Member(queryOutput: (value as! Root)[keyPath: column.keyPath]).queryFragment
                 }
                 valueFragment.append(open(column))

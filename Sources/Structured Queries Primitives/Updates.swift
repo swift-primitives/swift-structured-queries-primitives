@@ -89,6 +89,11 @@ public struct Updates<Base: Table>: Sendable {
             func open<Root, V>(
                 _ column: some WritableTableColumnExpression<Root, V>
             ) -> QueryFragment {
+                // `Root` is guaranteed to be `Value` here: `column` is drawn from
+                // `Value.TableColumns.writableColumns` below, so opening the existential
+                // against `Value` is always safe. force_cast is the "open existential"
+                // idiom used throughout this file's column-erasure machinery.
+                // swiftlint:disable:next force_cast
                 Value(queryOutput: newValue)[keyPath: column.keyPath as! KeyPath<Value, V>]
                     .queryFragment
             }

@@ -123,6 +123,11 @@ extension Table {
     /// A `SELECT` fragment projecting this instance's values aliased to their column names.
     public var query: QueryFragment {
         func open<Root, Value>(_ column: some TableColumnExpression<Root, Value>) -> QueryFragment {
+            // `Root` is guaranteed to be `Self` here: `column` is drawn from
+            // `TableColumns.allColumns` below, so opening the existential against
+            // `Self` is always safe. force_cast is the "open existential" idiom
+            // used throughout this file's column-erasure machinery.
+            // swiftlint:disable:next force_cast
             let value = Value(queryOutput: (self as! Root)[keyPath: column.keyPath])
             return "\(value) AS \(quote: column.name)"
         }
@@ -132,6 +137,11 @@ extension Table {
     /// A query fragment listing this instance's column values as a comma-separated list.
     public var queryFragment: QueryFragment {
         func open<Root, Value>(_ column: some TableColumnExpression<Root, Value>) -> QueryFragment {
+            // `Root` is guaranteed to be `Self` here: `column` is drawn from
+            // `TableColumns.allColumns` below, so opening the existential against
+            // `Self` is always safe. force_cast is the "open existential" idiom
+            // used throughout this file's column-erasure machinery.
+            // swiftlint:disable:next force_cast
             Value(queryOutput: (self as! Root)[keyPath: column.keyPath]).queryFragment
         }
         return TableColumns.allColumns.map { open($0) }.joined(separator: ", ")
