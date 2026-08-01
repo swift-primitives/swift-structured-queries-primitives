@@ -1,5 +1,5 @@
 /// A type that can prepare statements to seed a database's initial state.
-public struct Seeds: Sequence {
+public struct Seeds: Swift.Sequence {
     let seeds: [any Table]
 
     /// Prepares a number of batched insert statements to be executed.
