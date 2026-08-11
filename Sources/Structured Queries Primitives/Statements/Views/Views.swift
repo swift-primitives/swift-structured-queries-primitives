@@ -33,6 +33,16 @@ where Selection.QueryValue == View {
     fileprivate let orReplace: Bool
     fileprivate let select: Selection
 
+    /// Returns this statement after validating that its stored view definition contains no
+    /// parameter bindings.
+    ///
+    /// - Returns: This statement when its definition contains no bindings.
+    /// - Throws: ``QueryFragment/Error/bound(_:)`` with the exact number of bindings otherwise.
+    public func validated() throws(QueryFragment.Error) -> Self {
+        _ = try query.unbound()
+        return self
+    }
+
     /// Returns a `DROP VIEW` statement for this trigger.
     ///
     /// - Parameter ifExists: Adds an `IF EXISTS` condition to the `DROP VIEW`.

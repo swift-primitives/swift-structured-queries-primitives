@@ -1,3 +1,4 @@
+import Index_Primitives
 public import Structured_Queries_Primitives_Support
 
 /// A type representing a SQL string and its bindings.
@@ -85,6 +86,24 @@ extension QueryFragment {
             }
         }
         return (sql, bindings)
+    }
+
+    /// Returns this fragment after validating that it contains no parameter bindings.
+    ///
+    /// Use this operation before placing a fragment in a SQL definition position, such as a view
+    /// definition, where execution-time parameters cannot be retained.
+    ///
+    /// - Returns: This query fragment when it contains no bindings.
+    /// - Throws: ``QueryFragment/Error/bound(_:)`` with the exact number of bindings otherwise.
+    public func unbound() throws(QueryFragment.Error) -> Self {
+        var count: Index<QueryBinding>.Count = .zero
+        for segment in segments {
+            if case .binding = segment {
+                count += .one
+            }
+        }
+        guard count == .zero else { throw .bound(count) }
+        return self
     }
 }
 
