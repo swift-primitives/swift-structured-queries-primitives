@@ -30,6 +30,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swift-primitives/swift-tagged-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-index-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-byte-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-time-primitives.git", branch: "main"),
     ],
@@ -41,6 +42,7 @@ let package = Package(
             dependencies: [
                 "Structured Queries Primitives Support",
                 .product(name: "Tagged Primitives", package: "swift-tagged-primitives"),
+                .product(name: "Index Primitives", package: "swift-index-primitives"),
                 .product(name: "Byte Primitives", package: "swift-byte-primitives"),
                 .product(name: "Time Primitives", package: "swift-time-primitives"),
             ]
@@ -76,6 +78,7 @@ let package = Package(
             dependencies: [
                 "Structured Queries Primitives",
                 "Structured Queries Primitives Test Support",
+                .product(name: "Index Primitives", package: "swift-index-primitives"),
             ]
         ),
     ],
