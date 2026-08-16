@@ -29,7 +29,7 @@ extension TableDraft {
     public static subscript(
         dynamicMember keyPath: KeyPath<PrimaryTable.Type, some Statement<PrimaryTable>>
     ) -> some Statement<Self> {
-        let statement = PrimaryTable.self[keyPath: keyPath]
+        let statement = project(PrimaryTable.self, through: keyPath)
         return SQLQueryExpression(statement.query, as: Self.self)
     }
 
@@ -44,6 +44,13 @@ extension TableDraft {
     public static var all: SelectOf<Self> {
         unsafeBitCast(PrimaryTable.all.asSelect(), to: SelectOf<Self>.self)
     }
+}
+
+private func project<Root, Value>(
+    _ root: Root,
+    through keyPath: KeyPath<Root, Value>
+) -> Value {
+    root[keyPath: keyPath]
 }
 
 /// A type representing a database table's columns.
