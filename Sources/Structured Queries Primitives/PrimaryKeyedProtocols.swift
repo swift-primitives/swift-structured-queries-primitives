@@ -37,7 +37,8 @@ extension TableDraft {
     public static subscript(
         dynamicMember keyPath: KeyPath<PrimaryTable.Type, some SelectStatementOf<PrimaryTable>>
     ) -> SelectOf<Self> {
-        unsafeBitCast(PrimaryTable.self[keyPath: keyPath].asSelect(), to: SelectOf<Self>.self)
+        let statement = project(PrimaryTable.self, through: keyPath)
+        return unsafeBitCast(statement.asSelect(), to: SelectOf<Self>.self)
     }
 
     /// A select statement over all rows of this draft's primary table.
