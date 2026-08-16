@@ -47,7 +47,7 @@ extension TableDraft {
     }
 }
 
-private func project<Root, Value>(
+package func project<Root, Value>(
     _ root: Root,
     through keyPath: KeyPath<Root, Value>
 ) -> Value {

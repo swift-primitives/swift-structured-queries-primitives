@@ -144,7 +144,7 @@ extension Select {
             >
         ) -> Select<(repeat each C1, repeat each C2), From, (repeat each J1, repeat each J2)>
         where Columns == (repeat each C1), Joins == (repeat each J1) {
-            self + From.self[keyPath: keyPath]
+            self + project(From.self, through: keyPath)
         }
     #endif
 
