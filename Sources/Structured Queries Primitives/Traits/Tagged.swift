@@ -1,6 +1,7 @@
 public import Tagged_Primitives
 
-extension Tagged: _OptionalPromotable where Tag: ~Copyable & ~Escapable, Underlying: _OptionalPromotable {}
+extension Tagged: _OptionalPromotable
+where Tag: ~Copyable & ~Escapable, Underlying: _OptionalPromotable {}
 
 extension Tagged: QueryBindable where Tag: ~Copyable & ~Escapable, Underlying: QueryBindable {
     /// The query binding for this tagged value, forwarded from the underlying value.
@@ -28,7 +29,8 @@ extension Tagged: QueryExpression where Tag: ~Copyable & ~Escapable, Underlying:
     }
 }
 
-extension Tagged: QueryRepresentable where Tag: ~Copyable & ~Escapable, Underlying: QueryRepresentable {
+extension Tagged: QueryRepresentable
+where Tag: ~Copyable & ~Escapable, Underlying: QueryRepresentable {
     /// The query output type, preserving the tag around the underlying output type.
     public typealias QueryOutput = Tagged<Tag, Underlying.QueryOutput>
 

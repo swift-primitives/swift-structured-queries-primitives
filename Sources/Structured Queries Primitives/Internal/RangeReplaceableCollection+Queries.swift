@@ -1,3 +1,6 @@
+// swiftlint:disable no_any_protocol_existential
+// REASON: SQL AST storage intentionally erases heterogeneous query and table conformers.
+
 extension RangeReplaceableCollection {
     /// Creates a collection of query fragments from the given query expressions.
     public init<each Q: QueryExpression>(_ elements: repeat each Q)
@@ -23,3 +26,5 @@ extension RangeReplaceableCollection {
         return filter { set.insert($0).inserted }
     }
 }
+
+// swiftlint:enable no_any_protocol_existential

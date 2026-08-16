@@ -1,3 +1,6 @@
+// swiftlint:disable no_any_protocol_existential
+// REASON: SQL AST storage intentionally erases heterogeneous query and table conformers.
+
 import Structured_Queries_Primitives_Support
 
 /// A `SELECT` statement.
@@ -528,3 +531,5 @@ extension CopyOnWrite.Storage: @unchecked Sendable where Value: Sendable {}
 
 /// A task-local flag indicating whether column expressions are being evaluated for selection.
 @TaskLocal public var _isSelecting = false
+
+// swiftlint:enable no_any_protocol_existential

@@ -165,7 +165,8 @@ public enum InsertValuesBuilder<Value> {
     }
 
     /// Returns the value rows produced by an availability-limited block.
-    public static func buildLimitedAvailability(_ component: [[QueryFragment]]) -> [[QueryFragment]] {
+    public static func buildLimitedAvailability(_ component: [[QueryFragment]]) -> [[QueryFragment]]
+    {
         component
     }
 

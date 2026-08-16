@@ -1,3 +1,6 @@
+// swiftlint:disable no_any_protocol_existential
+// REASON: SQL AST storage intentionally erases heterogeneous query and table conformers.
+
 /// A type that represents a full or partial SQL query.
 public protocol QueryExpression<QueryValue> {
     /// The Swift data type representation of the expression's SQL data type.
@@ -26,3 +29,5 @@ extension QueryExpression {
         [self]
     }
 }
+
+// swiftlint:enable no_any_protocol_existential

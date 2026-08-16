@@ -1,3 +1,6 @@
+// swiftlint:disable no_any_protocol_existential
+// REASON: SQL AST storage intentionally erases heterogeneous query and table conformers.
+
 import Structured_Queries_Primitives_Support
 
 /// A collection of updates used in an update clause.
@@ -106,6 +109,8 @@ public struct Updates<Base: Table>: Sendable {
         }
     }
 }
+
+// swiftlint:enable no_any_protocol_existential
 
 extension Updates: QueryExpression {
     /// The query value type for this expression, which never produces a result.

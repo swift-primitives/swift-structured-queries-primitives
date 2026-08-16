@@ -1,3 +1,6 @@
+// swiftlint:disable no_any_protocol_existential
+// REASON: SQL AST storage intentionally erases heterogeneous query and table conformers.
+
 /// A type representing a database table's columns.
 ///
 /// Don't conform to this protocol directly. Instead, use the `@Table` and `@Column` macros to
@@ -39,3 +42,5 @@ extension TableDefinition {
         Self.allColumns
     }
 }
+
+// swiftlint:enable no_any_protocol_existential

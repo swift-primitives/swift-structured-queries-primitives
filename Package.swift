@@ -29,9 +29,18 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-primitives/swift-tagged-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-byte-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-time-primitives.git", branch: "main"),
+        .package(
+            url: "https://github.com/swift-primitives/swift-tagged-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-byte-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-time-primitives.git",
+            branch: "main"
+        ),
     ],
     targets: [
 
@@ -67,7 +76,10 @@ let package = Package(
             name: "Structured Queries Primitives Test Support",
             dependencies: [
                 "Structured Queries Primitives",
-                .product(name: "Tagged Primitives Test Support", package: "swift-tagged-primitives"),
+                .product(
+                    name: "Tagged Primitives Test Support",
+                    package: "swift-tagged-primitives"
+                ),
             ],
             path: "Tests/Support"
         ),

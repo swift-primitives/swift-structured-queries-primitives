@@ -1,3 +1,6 @@
+// swiftlint:disable no_any_protocol_existential
+// REASON: SQL AST storage intentionally erases heterogeneous query and table conformers.
+
 extension Never: Table {
     /// The column definition type used when `Never` conforms to `Table`, always empty.
     public struct TableColumns: TableDefinition {
@@ -46,3 +49,5 @@ extension Never.Selection {
     /// An empty column list, since `Never` has no values to select.
     public var allColumns: [any QueryExpression] { [] }
 }
+
+// swiftlint:enable no_any_protocol_existential
