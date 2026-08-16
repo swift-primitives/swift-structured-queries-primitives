@@ -29,7 +29,8 @@ extension TableDraft {
     public static subscript(
         dynamicMember keyPath: KeyPath<PrimaryTable.Type, some Statement<PrimaryTable>>
     ) -> some Statement<Self> {
-        SQLQueryExpression("\(PrimaryTable.self[keyPath: keyPath])")
+        let statement = PrimaryTable.self[keyPath: keyPath]
+        return SQLQueryExpression(statement.query, as: Self.self)
     }
 
     /// Forwards a primary table's select statement to this draft type.
