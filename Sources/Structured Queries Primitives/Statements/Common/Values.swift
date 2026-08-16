@@ -1,3 +1,6 @@
+// swiftlint:disable no_any_protocol_existential
+// REASON: SQL AST storage intentionally erases heterogeneous query and table conformers.
+
 /// A `SELECT` statement that selects a set of values.
 ///
 /// Equivalent to a `VALUES` statement in SQL.
@@ -35,3 +38,5 @@ public struct Values<QueryValue>: PartialSelectStatement {
         }
     }
 }
+
+// swiftlint:enable no_any_protocol_existential

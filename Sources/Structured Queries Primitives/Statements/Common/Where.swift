@@ -22,19 +22,19 @@ public struct Where<From: Table>: Sendable {
 
     /// Looks up a static `WHERE` clause declared on the table type.
     public static subscript(dynamicMember keyPath: KeyPath<From.Type, Self>) -> Self {
-        From.self[keyPath: keyPath]
+        project(From.self, through: keyPath)
     }
 
     /// Combines this clause with a `SELECT` statement looked up by key path.
     public subscript<each C: QueryRepresentable, each J: Table>(
         dynamicMember keyPath: KeyPath<From.Type, Select<(repeat each C), From, (repeat each J)>>
     ) -> Select<(repeat each C), From, (repeat each J)> {
-        self + From.self[keyPath: keyPath]
+        self + project(From.self, through: keyPath)
     }
 
     /// Combines this clause with another `WHERE` clause looked up by key path.
     public subscript(dynamicMember keyPath: KeyPath<From.Type, Self>) -> Self {
-        self + From.self[keyPath: keyPath]
+        self + project(From.self, through: keyPath)
     }
 
     /// Combines this clause with a `WHERE` clause looked up on the draft's primary table.
@@ -42,7 +42,7 @@ public struct Where<From: Table>: Sendable {
         dynamicMember keyPath: KeyPath<From.PrimaryTable.Type, Where<From.PrimaryTable>>
     ) -> Self
     where From: TableDraft {
-        self + unsafeBitCast(From.PrimaryTable.self[keyPath: keyPath], to: Self.self)
+        self + unsafeBitCast(project(From.PrimaryTable.self, through: keyPath), to: Self.self)
     }
 }
 

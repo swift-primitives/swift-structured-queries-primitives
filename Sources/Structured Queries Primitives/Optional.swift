@@ -1,3 +1,6 @@
+// swiftlint:disable no_any_protocol_existential
+// REASON: SQL AST storage intentionally erases heterogeneous query and table conformers.
+
 import Structured_Queries_Primitives_Support
 
 /// A protocol abstracting over optional values.
@@ -367,3 +370,5 @@ extension QueryExpression where QueryValue: _OptionalProtocol {
         SQLQueryExpression(transform(SQLQueryExpression(queryFragment)).queryFragment)
     }
 }
+
+// swiftlint:enable no_any_protocol_existential

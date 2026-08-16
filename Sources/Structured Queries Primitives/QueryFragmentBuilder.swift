@@ -1,3 +1,6 @@
+// swiftlint:disable no_any_protocol_existential
+// REASON: SQL AST storage intentionally erases heterogeneous query and table conformers.
+
 /// A builder of query fragments.
 ///
 /// This result builder is used by various query building methods, like ``Select/order(by:)`` and
@@ -72,3 +75,5 @@ extension QueryFragmentBuilder<any Statement> {
         first + rest.flatMap(\.self)
     }
 }
+
+// swiftlint:enable no_any_protocol_existential

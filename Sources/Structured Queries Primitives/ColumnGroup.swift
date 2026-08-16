@@ -1,3 +1,6 @@
+// swiftlint:disable no_any_protocol_existential
+// REASON: SQL AST storage intentionally erases heterogeneous query and table conformers.
+
 /// A group of table columns.
 ///
 /// Don't create instances of this value directly. Instead, use the `@Table` and `@Columns` macros
@@ -99,3 +102,5 @@ where Values.QueryOutput == Values {
         }
     }
 }
+
+// swiftlint:enable no_any_protocol_existential

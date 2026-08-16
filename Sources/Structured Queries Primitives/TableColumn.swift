@@ -1,3 +1,6 @@
+// swiftlint:disable no_any_protocol_existential
+// REASON: SQL AST storage intentionally erases heterogeneous query and table conformers.
+
 import Structured_Queries_Primitives_Support
 
 /// The underlying requirements shared by all table column expressions.
@@ -236,3 +239,5 @@ public struct GeneratedColumn<Root: Table, Value: QueryRepresentable & QueryBind
     /// This generated column wrapped in a single-element array of all columns.
     public var _allColumns: [any TableColumnExpression] { [self] }
 }
+
+// swiftlint:enable no_any_protocol_existential

@@ -29,20 +29,29 @@ extension TableDraft {
     public static subscript(
         dynamicMember keyPath: KeyPath<PrimaryTable.Type, some Statement<PrimaryTable>>
     ) -> some Statement<Self> {
-        SQLQueryExpression("\(PrimaryTable.self[keyPath: keyPath])")
+        let statement = project(PrimaryTable.self, through: keyPath)
+        return SQLQueryExpression(statement.query, as: Self.self)
     }
 
     /// Forwards a primary table's select statement to this draft type.
     public static subscript(
         dynamicMember keyPath: KeyPath<PrimaryTable.Type, some SelectStatementOf<PrimaryTable>>
     ) -> SelectOf<Self> {
-        unsafeBitCast(PrimaryTable.self[keyPath: keyPath].asSelect(), to: SelectOf<Self>.self)
+        let statement = project(PrimaryTable.self, through: keyPath)
+        return unsafeBitCast(statement.asSelect(), to: SelectOf<Self>.self)
     }
 
     /// A select statement over all rows of this draft's primary table.
     public static var all: SelectOf<Self> {
         unsafeBitCast(PrimaryTable.all.asSelect(), to: SelectOf<Self>.self)
     }
+}
+
+package func project<Root, Value>(
+    _ root: Root,
+    through keyPath: KeyPath<Root, Value>
+) -> Value {
+    root[keyPath: keyPath]
 }
 
 /// A type representing a database table's columns.

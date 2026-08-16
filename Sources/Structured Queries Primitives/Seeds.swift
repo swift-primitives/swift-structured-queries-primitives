@@ -1,3 +1,6 @@
+// swiftlint:disable no_any_protocol_existential
+// REASON: SQL AST storage intentionally erases heterogeneous query and table conformers.
+
 /// A type that can prepare statements to seed a database's initial state.
 public struct Seeds: Swift.Sequence {
     let seeds: [any Table]
@@ -162,7 +165,10 @@ public enum SeedsBuilder {
     }
 
     /// Combines the accumulated table array with the next result builder component.
-    public static func buildPartialBlock(accumulated: [any Table], next: [any Table]) -> [any Table] {
+    public static func buildPartialBlock(accumulated: [any Table], next: [any Table]) -> [any Table]
+    {
         accumulated + next
     }
 }
+
+// swiftlint:enable no_any_protocol_existential

@@ -1,3 +1,6 @@
+// swiftlint:disable no_any_protocol_existential
+// REASON: SQL AST storage intentionally erases heterogeneous query and table conformers.
+
 public import Byte_Primitives
 import Structured_Queries_Primitives_Support
 public import Time_Primitives
@@ -175,3 +178,5 @@ extension QueryBinding: CustomDebugStringConvertible {
         }
     }
 }
+
+// swiftlint:enable no_any_protocol_existential
