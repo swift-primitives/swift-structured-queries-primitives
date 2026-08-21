@@ -1,9 +1,5 @@
-// swiftlint:disable no_any_protocol_existential
-// REASON: SQL AST storage intentionally erases heterogeneous query and table conformers.
-
 import Structured_Queries_Primitives_Support
 
-/// A protocol abstracting over optional values.
 public protocol _OptionalProtocol<Wrapped> {
     associatedtype Wrapped
     var _wrapped: Wrapped? { get }
@@ -12,42 +8,34 @@ public protocol _OptionalProtocol<Wrapped> {
 }
 
 extension Optional: _OptionalProtocol {
-    /// The underlying optional value.
+
     public var _wrapped: Wrapped? { self }
-    /// An optional representing the absence of a value.
+
     public static var _none: Self { .none }
-    /// Creates an optional wrapping the given value.
+
     public static func _some(_ wrapped: Wrapped) -> Self { .some(wrapped) }
 }
 
-/// A protocol for types that can be promoted to an optional.
 public protocol _OptionalPromotable<_Optionalized> {
     associatedtype _Optionalized: _OptionalProtocol = Self?
 }
 
 extension Optional: _OptionalPromotable {
-    /// The optional form of this type.
+
     public typealias _Optionalized = Self
 }
 
-// extension [UInt8]: _OptionalPromotable where Element: _OptionalPromotable {}
-
 extension Optional: QueryBindable where Wrapped: QueryBindable {
-    /// The optional query value type of the wrapped value.
+
     public typealias QueryValue = Wrapped.QueryValue?
 
-    /// The query binding for this value, or a null binding when nil.
     public var queryBinding: QueryBinding {
         self?.queryBinding ?? .null
     }
 }
 
-// swiftlint:disable typed_throws_required
-// reason: `init(decoder:) throws` mirrors the `QueryDecodable` protocol requirement
-// (heterogeneous-backend decode errors). [API-ERR-006] exception
-// (rule-exemptions protocol-requirement shape).
 extension Optional: QueryDecodable where Wrapped: QueryDecodable {
-    /// Decodes an optional value from the given decoder.
+
     @inlinable
     public init(decoder: inout some QueryDecoder) throws {
         do {
@@ -57,23 +45,19 @@ extension Optional: QueryDecodable where Wrapped: QueryDecodable {
         }
     }
 }
-// swiftlint:enable typed_throws_required
 
 extension Optional: QueryExpression where Wrapped: QueryExpression {
-    /// The optional query value type of the wrapped expression.
+
     public typealias QueryValue = Wrapped.QueryValue?
 
-    /// The SQL fragment listing this expression's columns.
     public var queryFragment: QueryFragment {
         self._allColumns.map(\.queryFragment).joined(separator: ", ")
     }
 
-    /// The number of columns this expression spans.
     public static var _columnWidth: Int {
         Wrapped._columnWidth
     }
 
-    /// The column expressions comprising this value, or null placeholders when nil.
     public var _allColumns: [any QueryExpression] {
         self?._allColumns
             ?? Array(
@@ -84,10 +68,9 @@ extension Optional: QueryExpression where Wrapped: QueryExpression {
 }
 
 extension Optional: QueryRepresentable where Wrapped: QueryRepresentable {
-    /// The optional decoded output type of the wrapped value.
+
     public typealias QueryOutput = Wrapped.QueryOutput?
 
-    /// Creates an optional value from the given optional query output.
     @inlinable
     public init(queryOutput: Wrapped.QueryOutput?) {
         if let queryOutput {
@@ -97,7 +80,6 @@ extension Optional: QueryRepresentable where Wrapped: QueryRepresentable {
         }
     }
 
-    /// The decoded output value, or nil when absent.
     @inlinable
     public var queryOutput: Wrapped.QueryOutput? {
         self?.queryOutput
@@ -105,17 +87,15 @@ extension Optional: QueryRepresentable where Wrapped: QueryRepresentable {
 }
 
 extension Optional: Table, PartialSelectStatement, Statement where Wrapped: Table {
-    /// The name of the wrapped table.
+
     public static var tableName: String {
         Wrapped.tableName
     }
 
-    /// The alias of the wrapped table, if any.
     public static var tableAlias: String? {
         Wrapped.tableAlias
     }
 
-    /// The columns of this optional table.
     public static var columns: TableColumns {
         TableColumns()
     }
@@ -127,31 +107,24 @@ extension Optional: Table, PartialSelectStatement, Statement where Wrapped: Tabl
         self?[keyPath: keyPath]
     }
 
-    /// The columns of an optional table.
     @dynamicMemberLookup
     public struct TableColumns: TableDefinition {
     }
 
-    /// The optional selection type of the wrapped table.
     public typealias Selection = Wrapped.Selection?
 }
 
 extension Optional.TableColumns where Wrapped: Table {
-    /// The optional table type these columns describe.
+
     public typealias QueryValue = Optional
 
-    /// The optionalized columns of the wrapped table.
     public static var allColumns: [any TableColumnExpression] {
         func open<Root, Value>(
             _ column: some TableColumnExpression<Root, Value>
         ) -> any TableColumnExpression {
             guard let column = column as? TableColumn<Wrapped, Value>
             else {
-                // `TableColumnExpression` is a closed type-erasure surface (see its
-                // doc comment: "You should not conform to this protocol directly"),
-                // so a non-`TableColumn` column here must be a `GeneratedColumn`.
-                // swift-format-ignore: NeverForceUnwrap
-                // swiftlint:disable:next force_cast
+
                 let column = column as! GeneratedColumn<Wrapped, Value>
                 return GeneratedColumn<Optional, Value?>(
                     column.name,
@@ -168,17 +141,11 @@ extension Optional.TableColumns where Wrapped: Table {
         return Wrapped.TableColumns.allColumns.map { open($0) }
     }
 
-    /// The optionalized writable columns of the wrapped table.
     public static var writableColumns: [any WritableTableColumnExpression] {
         func open<Root, Value>(
             _ column: some WritableTableColumnExpression<Root, Value>
         ) -> any WritableTableColumnExpression {
-            // `Root` is guaranteed to be `Wrapped` here: `column` is drawn from
-            // `Wrapped.TableColumns.writableColumns` below, and `TableColumn` is the
-            // only `WritableTableColumnExpression` conformer (`GeneratedColumn` is
-            // read-only), so this cast is always safe.
-            // swift-format-ignore: NeverForceUnwrap
-            // swiftlint:disable:next force_cast
+
             let column = column as! TableColumn<Wrapped, Value>
             return TableColumn<Optional, Value?>(
                 column.name,
@@ -189,7 +156,6 @@ extension Optional.TableColumns where Wrapped: Table {
         return Wrapped.TableColumns.writableColumns.map { open($0) }
     }
 
-    /// Returns the optionalized table column for the given wrapped column.
     public subscript<Member>(
         dynamicMember keyPath: KeyPath<Wrapped.TableColumns, TableColumn<Wrapped, Member>>
     ) -> TableColumn<Optional, Member?> {
@@ -200,7 +166,6 @@ extension Optional.TableColumns where Wrapped: Table {
         )
     }
 
-    /// Returns the optionalized generated column for the given wrapped column.
     public subscript<Member>(
         dynamicMember keyPath: KeyPath<Wrapped.TableColumns, GeneratedColumn<Wrapped, Member>>
     ) -> GeneratedColumn<Optional, Member?> {
@@ -211,7 +176,6 @@ extension Optional.TableColumns where Wrapped: Table {
         )
     }
 
-    /// Returns the optionalized column group for the given wrapped column.
     public subscript<Member>(
         dynamicMember keyPath: KeyPath<Wrapped.TableColumns, ColumnGroup<Wrapped, Member>>
     ) -> ColumnGroup<Optional, Member?> {
@@ -220,14 +184,12 @@ extension Optional.TableColumns where Wrapped: Table {
         )
     }
 
-    /// Returns the optionalized expression for the given wrapped column.
     public subscript<Member: QueryExpression>(
         dynamicMember keyPath: KeyPath<Wrapped.TableColumns, Member>
     ) -> some QueryExpression<Member.QueryValue?> {
         Member?.some(Wrapped.columns[keyPath: keyPath])
     }
 
-    /// Returns the wrapped optional expression for the given column.
     @_disfavoredOverload
     public subscript<QueryValue>(
         dynamicMember keyPath: KeyPath<Wrapped.TableColumns, some QueryExpression<QueryValue?>>
@@ -237,14 +199,14 @@ extension Optional.TableColumns where Wrapped: Table {
 }
 
 extension Optional: PrimaryKeyedTable where Wrapped: PrimaryKeyedTable {
-    /// The optional draft type of the wrapped table.
+
     public typealias Draft = Wrapped.Draft?
 }
 
 extension Optional: TableDraft where Wrapped: TableDraft {
-    /// The optional primary table type of the wrapped draft.
+
     public typealias PrimaryTable = Wrapped.PrimaryTable?
-    /// Creates an optional draft from the given optional primary table.
+
     public init(_ primaryTable: Wrapped.PrimaryTable?) {
         self = primaryTable.map(Wrapped.init)
     }
@@ -252,14 +214,12 @@ extension Optional: TableDraft where Wrapped: TableDraft {
 
 extension Optional.TableColumns: PrimaryKeyedTableDefinition
 where Wrapped.TableColumns: PrimaryKeyedTableDefinition {
-    /// The optional primary key type of the wrapped table.
+
     public typealias PrimaryKey = Wrapped.PrimaryKey?
 
-    /// The primary key column of an optional table.
     public struct PrimaryColumn: _TableColumnExpression {
     }
 
-    /// The primary key column of this optional table.
     public var primaryKey: PrimaryColumn {
         PrimaryColumn()
     }
@@ -267,23 +227,19 @@ where Wrapped.TableColumns: PrimaryKeyedTableDefinition {
 
 extension Optional.TableColumns.PrimaryColumn
 where Wrapped.TableColumns: PrimaryKeyedTableDefinition {
-    /// The optional root table type of this column.
+
     public typealias Root = Optional
 
-    /// The optional value type of this primary key column.
     public typealias Value = Wrapped.PrimaryKey?
 
-    /// The names of the wrapped primary key columns.
     public var _names: [String] {
         Wrapped.columns.primaryKey._names
     }
 
-    /// The key path from an optional row to this column's optional output.
     public var keyPath: KeyPath<Wrapped?, Wrapped.PrimaryKey.QueryOutput?> {
         \.[member: \Wrapped.PrimaryKey.self, column: Wrapped.columns.primaryKey.keyPath]
     }
 
-    /// The SQL fragment for the wrapped primary key column.
     public var queryFragment: QueryFragment {
         Wrapped.columns.primaryKey.queryFragment
     }
@@ -291,17 +247,15 @@ where Wrapped.TableColumns: PrimaryKeyedTableDefinition {
 
 extension Optional.TableColumns.PrimaryColumn: TableColumnExpression
 where Wrapped.TableColumns.PrimaryColumn: TableColumnExpression {
-    /// The name of the wrapped primary key column.
+
     public var name: String {
         Wrapped.columns.primaryKey.name
     }
 
-    /// The default value of the wrapped primary key column, if any.
     public var defaultValue: Wrapped.PrimaryKey.QueryOutput?? {
         Wrapped.columns.primaryKey.defaultValue
     }
 
-    /// Returns this primary key column aliased to the given table alias.
     public func _aliased<Name: AliasName>(
         _ alias: Name.Type
     ) -> any TableColumnExpression<TableAlias<Optional, Name>, Wrapped.PrimaryKey?> {
@@ -311,7 +265,7 @@ where Wrapped.TableColumns.PrimaryColumn: TableColumnExpression {
 
 extension Optional.TableColumns.PrimaryColumn: WritableTableColumnExpression
 where Wrapped.TableColumns.PrimaryColumn: WritableTableColumnExpression {
-    /// Returns this writable primary key column aliased to the given table alias.
+
     public func _aliased<Name: AliasName>(
         _ alias: Name.Type
     ) -> any WritableTableColumnExpression<TableAlias<Optional, Name>, Wrapped.PrimaryKey?> {
@@ -320,7 +274,7 @@ where Wrapped.TableColumns.PrimaryColumn: WritableTableColumnExpression {
 }
 
 extension Optional: TableExpression where Wrapped: TableExpression {
-    /// The column expressions for this row, or null placeholders when absent.
+
     public var allColumns: [any QueryExpression] {
         self?.allColumns
             ?? Wrapped.QueryValue.TableColumns.allColumns.map {
@@ -330,19 +284,7 @@ extension Optional: TableExpression where Wrapped: TableExpression {
 }
 
 extension QueryExpression where QueryValue: _OptionalProtocol {
-    /// Creates and optionalizes a new expression from this one by applying an unwrapped version of
-    /// this expression to a given closure.
-    ///
-    /// ```swift
-    /// Reminder.where {
-    ///   $0.dueDate.map { $0 > Date() }
-    /// }
-    /// // SELECT … FROM "reminders"
-    /// // WHERE "reminders"."dueDate" > '2018-01-29 00:08:00.000'
-    /// ```
-    ///
-    /// - Parameter transform: A closure that takes an unwrapped version of this expression.
-    /// - Returns: The result of the transform function, optionalized.
+
     @_disfavoredOverload
     public func map<T>(
         _ transform: (SQLQueryExpression<QueryValue.Wrapped>) -> some QueryExpression<T>
@@ -350,19 +292,6 @@ extension QueryExpression where QueryValue: _OptionalProtocol {
         SQLQueryExpression(transform(SQLQueryExpression(queryFragment)).queryFragment)
     }
 
-    /// Creates a new optional expression from this one by applying an unwrapped version of this
-    /// expression to a given closure.
-    ///
-    /// ```swift
-    /// Reminder.select {
-    ///   $0.dueDate.flatMap { $0.max() }
-    /// }
-    /// // SELECT max("reminders"."dueDate") FROM "reminders"
-    /// // => [Date?]
-    /// ```
-    ///
-    /// - Parameter transform: A closure that takes an unwrapped version of this expression.
-    /// - Returns: The result of the transform function.
     @_disfavoredOverload
     public func flatMap<T>(
         _ transform: (SQLQueryExpression<QueryValue.Wrapped>) -> some QueryExpression<T?>
@@ -370,5 +299,3 @@ extension QueryExpression where QueryValue: _OptionalProtocol {
         SQLQueryExpression(transform(SQLQueryExpression(queryFragment)).queryFragment)
     }
 }
-
-// swiftlint:enable no_any_protocol_existential

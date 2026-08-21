@@ -1,17 +1,8 @@
-// swiftlint:disable no_any_protocol_existential
-// REASON: SQL AST storage intentionally erases heterogeneous query and table conformers.
-
 import Structured_Queries_Primitives_Support
 
-/// A `SELECT` statement.
-///
-/// This type of statement is constructed from ``Table/all`` and static aliases to methods on the
-/// `Select` type, like `select`, `join`, `group(by:)`, `order(by:)`, and more.
-///
-/// To learn more, see <doc:SelectStatements>.
 @dynamicMemberLookup
 public struct Select<Columns, From: Table, Joins>: Sendable {
-    // NB: A parameter pack compiler crash forces us to heap-allocate this storage.
+
     @CopyOnWrite var clauses = _SelectClauses()
 
     var isEmpty: Bool {
@@ -94,7 +85,6 @@ public struct Select<Columns, From: Table, Joins>: Sendable {
     }
 }
 
-/// The set of clauses that compose a `SELECT` statement.
 public struct _SelectClauses: Sendable {
     var isEmpty = false
     var distinct: _DistinctClause?
@@ -108,14 +98,11 @@ public struct _SelectClauses: Sendable {
     var limit: _LimitClause?
 }
 
-/// The `DISTINCT` clause of a `SELECT` statement.
 public enum _DistinctClause: Sendable {
     case all
     case on([QueryFragment])
 }
 
-// Overload set disambiguated by generic constraints and @_disfavoredOverload ranking; renaming would break the SQL-mirroring API.
-// swift-format-ignore: AmbiguousTrailingClosureOverload
 extension Select {
     init(isEmpty: Bool = false, where: [QueryFragment] = []) {
         self.isEmpty = isEmpty
@@ -123,9 +110,7 @@ extension Select {
     }
 
     #if DEBUG
-        // NB: This can cause 'EXC_BAD_ACCESS' when 'C2' or 'J2' contain parameters.
-        // TODO: Report issue to Swift team.
-        /// An unavailable dynamic-member subscript for unsupported column and join counts.
+
         @available(
             *,
             unavailable,
@@ -148,11 +133,6 @@ extension Select {
         }
     #endif
 
-    /// Creates a new select statement from this one by appending the given result column to its
-    /// selection.
-    ///
-    /// - Parameter selection: A key path to a column to select.
-    /// - Returns: A new select statement that selects the given column.
     public func select<each C1: QueryRepresentable, C2: QueryExpression>(
         _ selection: KeyPath<From.TableColumns, C2>
     ) -> Select<(repeat each C1, C2.QueryValue), From, ()>
@@ -160,11 +140,6 @@ extension Select {
         select { $0[keyPath: selection] }
     }
 
-    // NB: This overload is required for CTEs with join clauses to avoid a compiler bug.
-    /// Creates a new select statement from this one by selecting the given result column.
-    ///
-    /// - Parameter selection: A closure that selects a result column from this select's tables.
-    /// - Returns: A new select statement that selects the given column.
     @_disfavoredOverload
     public func select<C: QueryExpression, each J: Table>(
         _ selection: ((From.TableColumns, repeat (each J).TableColumns)) -> C
@@ -173,10 +148,6 @@ extension Select {
         _select(selection)
     }
 
-    /// Creates a new select statement from this one by selecting the given result column.
-    ///
-    /// - Parameter selection: A closure that selects a result column from this select's tables.
-    /// - Returns: A new select statement that selects the given column.
     @_disfavoredOverload
     public func select<C: QueryExpression, each J: Table>(
         _ selection: (From.TableColumns, repeat (each J).TableColumns) -> C
@@ -185,11 +156,6 @@ extension Select {
         _select(selection)
     }
 
-    /// Creates a new select statement from this one by appending the given result column to its
-    /// selection.
-    ///
-    /// - Parameter selection: A closure that selects a result column from this select's table.
-    /// - Returns: A new select statement that selects the given column.
     public func select<each C1: QueryRepresentable, C2: QueryExpression>(
         _ selection: (From.TableColumns) -> C2
     ) -> Select<(repeat each C1, C2.QueryValue), From, ()>
@@ -197,11 +163,6 @@ extension Select {
         _select(selection)
     }
 
-    /// Creates a new select statement from this one by appending the given result column to its
-    /// selection.
-    ///
-    /// - Parameter selection: A closure that selects a result column from this select's tables.
-    /// - Returns: A new select statement that selects the given column.
     public func select<each C1: QueryRepresentable, C2: QueryExpression, each J: Table>(
         _ selection: ((From.TableColumns, repeat (each J).TableColumns)) -> C2
     ) -> Select<(repeat each C1, C2.QueryValue), From, (repeat each J)>
@@ -209,11 +170,6 @@ extension Select {
         _select(selection)
     }
 
-    /// Creates a new select statement from this one by appending the given result column to its
-    /// selection.
-    ///
-    /// - Parameter selection: A closure that selects a result column from this select's tables.
-    /// - Returns: A new select statement that selects the given column.
     @_disfavoredOverload
     public func select<each C1: QueryRepresentable, C2: QueryExpression, each J: Table>(
         _ selection: (From.TableColumns, repeat (each J).TableColumns) -> C2
@@ -222,11 +178,6 @@ extension Select {
         _select(selection)
     }
 
-    /// Creates a new select statement from this one by appending the given result columns to its
-    /// selection.
-    ///
-    /// - Parameter selection: A closure that selects columns from this select's tables.
-    /// - Returns: A new select statement that selects the given columns.
     public func select<
         each C1: QueryRepresentable,
         C2: QueryExpression,
@@ -250,11 +201,6 @@ extension Select {
         _select(selection)
     }
 
-    /// Creates a new select statement from this one by appending the given result columns to its
-    /// selection.
-    ///
-    /// - Parameter selection: A closure that selects columns from this select's tables.
-    /// - Returns: A new select statement that selects the given columns.
     @_disfavoredOverload
     public func select<
         each C1: QueryRepresentable,
@@ -309,15 +255,6 @@ extension Select {
     }
 }
 
-/// Combines two select statements of the same table type together.
-///
-/// This operator combines two select statements of the same table type together by combining
-/// each of their clauses together.
-///
-/// - Parameters:
-///   - lhs: A select statement.
-///   - rhs: Another select statement of the same table type.
-/// - Returns: A new select statement combining the clauses of each select statement.
 public func + <
     each C1: QueryRepresentable,
     each C2: QueryRepresentable,
@@ -352,15 +289,13 @@ public func + <
 }
 
 extension Select: SelectStatement {
-    /// The query value type of a select statement, equal to its selected columns.
+
     public typealias QueryValue = Columns
 
-    /// The underlying clauses that compose this select statement.
     public var _selectClauses: _SelectClauses {
         clauses
     }
 
-    /// The complete `SELECT` query fragment assembled from this statement's clauses.
     public var query: QueryFragment {
         guard !isEmpty else { return "" }
         var query: QueryFragment = "SELECT"
@@ -415,11 +350,9 @@ extension Select: SelectStatement {
     }
 }
 
-/// A select statement over the given table and joins with no columns selected yet.
 public typealias SelectOf<From: Table, each Join: Table> =
     Select<(), From, (repeat each Join)>
 
-/// A single `JOIN` clause within a `SELECT` statement.
 public struct _JoinClause: QueryExpression, Sendable {
     let constraint: QueryFragment
     let `operator`: QueryFragment?
@@ -443,14 +376,13 @@ public struct _JoinClause: QueryExpression, Sendable {
 }
 
 extension _JoinClause {
-    /// The query value type of a join clause, which produces no value.
+
     public typealias QueryValue = Never
 
     struct Operator {
         let queryFragment: QueryFragment
     }
 
-    /// The SQL fragment representing this join clause.
     public var queryFragment: QueryFragment {
         var query: QueryFragment = ""
         if let `operator` {
@@ -476,17 +408,15 @@ extension _JoinClause.Operator {
     static let right = Self(queryFragment: "RIGHT OUTER")
 }
 
-/// A `LIMIT` clause within a `SELECT` statement, optionally including an `OFFSET`.
 public struct _LimitClause: QueryExpression, Sendable {
     let maxLength: QueryFragment
     let offset: QueryFragment?
 }
 
 extension _LimitClause {
-    /// The query value type of a limit clause, which produces no value.
+
     public typealias QueryValue = Never
 
-    /// The SQL fragment representing this limit clause.
     public var queryFragment: QueryFragment {
         var query: QueryFragment = "LIMIT \(maxLength)"
         if let offset {
@@ -522,14 +452,6 @@ private struct CopyOnWrite<Value> {
 
 extension CopyOnWrite: Sendable where Value: Sendable {}
 
-// WHY: Category D — structural Sendable workaround (SP-6/SP-7).
-// WHY: CoW storage class. No synchronization; CoW discipline via
-// WHY: isKnownUniquelyReferenced at the call site.
-// WHEN TO REMOVE: When compiler gains structural inference through class storage.
-// TRACKING: unsafe-audit-findings.md Category D SP-6.
 extension CopyOnWrite.Storage: @unchecked Sendable where Value: Sendable {}
 
-/// A task-local flag indicating whether column expressions are being evaluated for selection.
 @TaskLocal public var _isSelecting = false
-
-// swiftlint:enable no_any_protocol_existential

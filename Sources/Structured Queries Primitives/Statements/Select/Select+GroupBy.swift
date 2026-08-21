@@ -1,16 +1,5 @@
-// Overload set disambiguated by generic constraints and @_disfavoredOverload ranking; renaming would break the SQL-mirroring API.
-// swift-format-ignore: AmbiguousTrailingClosureOverload
 extension Select {
-    /// Creates a new select statement from this one by appending the given column to its `GROUP BY`
-    /// clause.
-    ///
-    /// - Parameter grouping: A closure that returns a column to group by from this select's tables.
-    /// - Returns: A new select statement that groups by the given column.
-    ///
-    /// Disfavored so that single-join selects resolve to the `Joins: Table` overload below:
-    /// with a one-element pack the two have identical effective signatures, and the generic
-    /// return `C` defeats the specialization ranking that disambiguates the equivalent
-    /// `having`/`order` overload pairs.
+
     @_disfavoredOverload
     public func group<C: QueryExpression, each J: Table>(
         by grouping: (From.TableColumns, repeat (each J).TableColumns) -> C
@@ -18,13 +7,6 @@ extension Select {
         _group(by: grouping)
     }
 
-    /// Creates a new select statement from this one by appending the given columns to its `GROUP BY`
-    /// clause.
-    ///
-    /// - Parameter grouping: A closure that returns a column to group by from this select's tables.
-    /// - Returns: A new select statement that groups by the given column.
-    ///
-    /// Disfavored for the same single-join disambiguation as the single-column pack overload.
     @_disfavoredOverload
     public func group<
         C1: QueryExpression,
@@ -37,22 +19,12 @@ extension Select {
         _group(by: grouping)
     }
 
-    /// Creates a new select statement from this one by appending the given column to its `GROUP BY`
-    /// clause.
-    ///
-    /// - Parameter grouping: A closure that returns a column to group by from this select's tables.
-    /// - Returns: A new select statement that groups by the given column.
     public func group<C: QueryExpression>(
         by grouping: (From.TableColumns, Joins.TableColumns) -> C
     ) -> Self where Joins: Table {
         _groupSingleJoin(by: grouping)
     }
 
-    /// Creates a new select statement from this one by appending the given columns to its `GROUP BY`
-    /// clause.
-    ///
-    /// - Parameter grouping: A closure that returns a column to group by from this select's tables.
-    /// - Returns: A new select statement that groups by the given column.
     public func group<
         C1: QueryExpression,
         C2: QueryExpression,

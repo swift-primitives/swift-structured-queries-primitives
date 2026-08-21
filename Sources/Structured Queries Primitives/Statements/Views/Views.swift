@@ -1,14 +1,7 @@
 import Structured_Queries_Primitives_Support
 
 extension Table {
-    /// A `CREATE TEMPORARY VIEW` statement.
-    ///
-    /// See <doc:Views> for more information.
-    ///
-    /// - Parameters:
-    ///   - orReplace: Adds an `OR REPLACE` clause to the `CREATE VIEW` statement.
-    ///   - select: A statement describing the contents of the view.
-    /// - Returns: A temporary trigger.
+
     public static func createTemporaryView<Selection: PartialSelectStatement>(
         orReplace: Bool = false,
         as select: Selection
@@ -18,25 +11,16 @@ extension Table {
     }
 }
 
-/// A `CREATE TEMPORARY VIEW` statement.
-///
-/// This type of statement is returned from ``Table/createTemporaryView(orReplace:as:)``.
-///
-/// To learn more, see <doc:Views>.
 public struct TemporaryView<View: Table, Selection: PartialSelectStatement>: Statement
 where Selection.QueryValue == View {
-    /// The query value type for a `CREATE TEMPORARY VIEW` statement, which produces no value.
+
     public typealias QueryValue = ()
-    /// The `From` type for a `CREATE TEMPORARY VIEW` statement, which selects from no table.
+
     public typealias From = Never
 
     fileprivate let orReplace: Bool
     fileprivate let select: Selection
 
-    /// Returns a `DROP VIEW` statement for this trigger.
-    ///
-    /// - Parameter ifExists: Adds an `IF EXISTS` condition to the `DROP VIEW`.
-    /// - Returns: A `DROP VIEW` statement for this trigger.
     public func drop(ifExists: Bool = false) -> some Statement<()> {
         var query: QueryFragment = "DROP VIEW"
         if ifExists {
@@ -50,7 +34,6 @@ where Selection.QueryValue == View {
         return SQLQueryExpression(query)
     }
 
-    /// The `CREATE TEMPORARY VIEW` query fragment for this statement.
     public var query: QueryFragment {
         var query: QueryFragment = "CREATE"
         if orReplace {

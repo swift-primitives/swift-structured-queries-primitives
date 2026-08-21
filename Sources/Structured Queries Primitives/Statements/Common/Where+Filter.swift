@@ -1,19 +1,5 @@
-// Overload set disambiguated by generic constraints and @_disfavoredOverload ranking; renaming would break the SQL-mirroring API.
-// swift-format-ignore: AmbiguousTrailingClosureOverload
 extension Where {
-    /// Adds a condition to a where clause.
-    ///
-    /// ```swift
-    /// extension Reminder {
-    ///   static let flagged = Self.where(\.isFlagged)
-    /// }
-    ///
-    /// Reminder.flagged.where(\.isCompleted)
-    /// // WHERE "reminders"."isFlagged" AND "reminders"."isCompleted"
-    /// ```
-    ///
-    /// - Parameter keyPath: A key path to a Boolean expression to filter by.
-    /// - Returns: A where clause with the added predicate.
+
     public func `where`(
         _ keyPath: KeyPath<From.TableColumns, some QueryExpression<some _OptionalPromotable<Bool?>>>
     ) -> Self {
@@ -22,10 +8,6 @@ extension Where {
         return `where`
     }
 
-    /// Adds a condition to a where clause.
-    ///
-    /// - Parameter predicate: A predicate to add.
-    /// - Returns: A where clause with the added predicate.
     @_disfavoredOverload
     public func `where`(
         _ predicate: (From.TableColumns) -> some QueryExpression<some _OptionalPromotable<Bool?>>
@@ -35,10 +17,6 @@ extension Where {
         return `where`
     }
 
-    /// Adds a condition to a where clause.
-    ///
-    /// - Parameter predicate: A predicate to add.
-    /// - Returns: A where clause with the added predicate.
     public func `where`(
         @QueryFragmentBuilder<Bool> _ predicate: (From.TableColumns) -> [QueryFragment]
     ) -> Self {
@@ -47,38 +25,18 @@ extension Where {
         return `where`
     }
 
-    /// Combines the predicates of two where clauses together using `AND`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A where clause.
-    ///   - rhs: Another where clause.
-    /// - Returns: A where clause that `AND`s the given where clauses together.
     public static func && (lhs: Self, rhs: Self) -> Self {
         lhs.and(rhs)
     }
 
-    /// Combines the predicates of two where clauses together using `OR`.
-    ///
-    /// - Parameters:
-    ///   - lhs: A where clause.
-    ///   - rhs: Another where clause.
-    /// - Returns: A where clause that `OR`s the given where clauses together.
     public static func || (lhs: Self, rhs: Self) -> Self {
         lhs.or(rhs)
     }
 
-    /// Negates the predicates of a where clause using `NOT`.
-    ///
-    /// - Parameter where: A where clause.
-    /// - Returns: A where clause that `NOT`s the given where clause.
     public static prefix func ! (where: Self) -> Self {
         `where`.not()
     }
 
-    /// Combines the predicates of this where clause and another using `AND`.
-    ///
-    /// - Parameter other: Another where clause.
-    /// - Returns: A where clause that `AND`s the given where clauses together.
     public func and(_ other: Self) -> Self {
         guard !predicates.isEmpty else { return other }
         guard !other.predicates.isEmpty else { return self }
@@ -92,10 +50,6 @@ extension Where {
         return `where`
     }
 
-    /// Combines the predicates of this where clause and another using `OR`.
-    ///
-    /// - Parameter other: Another where clause.
-    /// - Returns: A where clause that `OR`s the given where clauses together.
     public func or(_ other: Self) -> Self {
         guard !predicates.isEmpty else { return other }
         guard !other.predicates.isEmpty else { return self }
@@ -109,9 +63,6 @@ extension Where {
         return `where`
     }
 
-    /// Negates the predicates of a where clause using `NOT`.
-    ///
-    /// - Returns: A where clause that `NOT`s this where clause.
     public func not() -> Self {
         var `where` = self
         `where`.predicates = [

@@ -44,7 +44,6 @@ let package = Package(
     ],
     targets: [
 
-        // MARK: - Core
         .target(
             name: "Structured Queries Primitives",
             dependencies: [
@@ -55,13 +54,11 @@ let package = Package(
             ]
         ),
 
-        // MARK: - Support
         .target(
             name: "Structured Queries Primitives Support",
             dependencies: []
         ),
 
-        // MARK: - Foundation Integration (opt-in leaf; no core/Support target depends on it)
         .target(
             name: "Structured Queries Primitives Foundation Integration",
             dependencies: [
@@ -71,7 +68,6 @@ let package = Package(
             ]
         ),
 
-        // MARK: - Tests
         .target(
             name: "Structured Queries Primitives Test Support",
             dependencies: [

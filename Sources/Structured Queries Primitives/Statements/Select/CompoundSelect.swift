@@ -1,13 +1,5 @@
 extension PartialSelectStatement {
-    /// Creates a compound select statement from the union of this select statement and another.
-    ///
-    /// The operation combines two select statements together as a compound select statement using
-    /// the `UNION` (or `UNION ALL`) operators.
-    ///
-    /// - Parameters:
-    ///   - all: Use the `UNION ALL` operator instead of `UNION`.
-    ///   - other: Another select statement with the same selected column types.
-    /// - Returns: A compound select statement.
+
     public func union(
         all: Bool = false,
         _ other: some PartialSelectStatement<QueryValue>
@@ -15,27 +7,12 @@ extension PartialSelectStatement {
         CompoundSelect(lhs: self, operator: all ? .unionAll : .union, rhs: other)
     }
 
-    /// Creates a compound select statement from the intersection of this select statement and
-    /// another.
-    ///
-    /// The operation combines two select statements together as a compound select statement using
-    /// the `INTERSECT` operator.
-    ///
-    /// - Parameter other: Another select statement with the same selected column types.
-    /// - Returns: A compound select statement.
     public func intersect<F, J>(
         _ other: some SelectStatement<QueryValue, F, J>
     ) -> some PartialSelectStatement<QueryValue> {
         CompoundSelect(lhs: self, operator: .intersect, rhs: other)
     }
 
-    /// Creates a compound select statement from this select statement and the subtraction of another.
-    ///
-    /// The operation combines two select statements together as a compound select statement using
-    /// the `EXCEPT` operator.
-    ///
-    /// - Parameter other: Another select statement with the same selected column types.
-    /// - Returns: A compound select statement.
     public func except<F, J>(
         _ other: some SelectStatement<QueryValue, F, J>
     ) -> some PartialSelectStatement<QueryValue> {

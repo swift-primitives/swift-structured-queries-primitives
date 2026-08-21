@@ -1,56 +1,7 @@
 extension Table {
-    /// Columns referencing the value that would have been inserted in an
-    /// [insert statement](<doc:InsertStatements>) had there been no conflict.
+
     public typealias Excluded = TableAlias<Self, _ExcludedName>.TableColumns
 
-    /// An insert statement for one or more table rows.
-    ///
-    /// This function can be used to create an insert statement from a ``Table`` value.
-    ///
-    /// ```swift
-    /// let tag = Tag(title: "car")
-    /// Tag.insert { tag }
-    /// // INSERT INTO "tags" ("title")
-    /// // VALUES ('car')
-    /// ```
-    ///
-    /// It can also be used to insert multiple rows in a single statement.
-    ///
-    /// ```swift
-    /// let tags = [
-    ///   Tag(title: "car"),
-    ///   Tag(title: "kids"),
-    ///   Tag(title: "someday"),
-    ///   Tag(title: "optional")
-    /// ]
-    /// Tag.insert { tags }
-    /// // INSERT INTO "tags" ("title")
-    /// // VALUES ('car'), ('kids'), ('someday'), ('optional')
-    /// ```
-    ///
-    /// The `values` trailing closure is a result builder that will insert any number of expressions,
-    /// one after the other, and supports basic control flow statements.
-    ///
-    /// ```swift
-    /// Tag.insert {
-    ///   if vehicleOwner {
-    ///     Tag(name: "car")
-    ///   }
-    ///   Tag(name: "kids")
-    ///   Tag(name: "someday")
-    ///   Tag(name: "optional")
-    /// }
-    /// // INSERT INTO "tags" ("title")
-    /// // VALUES ('car'), ('kids'), ('someday'), ('optional')
-    /// ```
-    ///
-    /// - Parameters:
-    ///   - columns: Columns to insert.
-    ///   - values: A builder of row values for the given columns.
-    ///   - updates: Updates to perform in an upsert clause should the insert conflict with an
-    ///     existing row.
-    ///   - updateFilter: A filter to apply to the update clause.
-    /// - Returns: An insert statement.
     public static func insert(
         _ columns: (TableColumns) -> TableColumns = { $0 },
         @InsertValuesBuilder<Self> values: () -> [[QueryFragment]],
@@ -68,54 +19,6 @@ extension Table {
         )
     }
 
-    /// An insert statement for one or more table rows.
-    ///
-    /// This function can be used to create an insert statement from a ``Table`` value.
-    ///
-    /// ```swift
-    /// let tag = Tag(title: "car")
-    /// Tag.insert { tag }
-    /// // INSERT INTO "tags" ("title")
-    /// // VALUES ('car')
-    /// ```
-    ///
-    /// It can also be used to insert multiple rows in a single statement.
-    ///
-    /// ```swift
-    /// let tags = [
-    ///   Tag(title: "car"),
-    ///   Tag(title: "kids"),
-    ///   Tag(title: "someday"),
-    ///   Tag(title: "optional")
-    /// ]
-    /// Tag.insert { tags }
-    /// // INSERT INTO "tags" ("title")
-    /// // VALUES ('car'), ('kids'), ('someday'), ('optional')
-    /// ```
-    ///
-    /// The `values` trailing closure is a result builder that will insert any number of expressions,
-    /// one after the other, and supports basic control flow statements.
-    ///
-    /// ```swift
-    /// Tag.insert {
-    ///   if vehicleOwner {
-    ///     Tag(name: "car")
-    ///   }
-    ///   Tag(name: "kids")
-    ///   Tag(name: "someday")
-    ///   Tag(name: "optional")
-    /// }
-    /// // INSERT INTO "tags" ("title")
-    /// // VALUES ('car'), ('kids'), ('someday'), ('optional')
-    /// ```
-    ///
-    /// - Parameters:
-    ///   - columns: Columns to insert.
-    ///   - values: A builder of row values for the given columns.
-    ///   - updates: Updates to perform in an upsert clause should the insert conflict with an
-    ///     existing row.
-    ///   - updateFilter: A filter to apply to the update clause.
-    /// - Returns: An insert statement.
     public static func insert(
         _ columns: (TableColumns) -> TableColumns = { $0 },
         @InsertValuesBuilder<Self> values: () -> [[QueryFragment]],
@@ -131,17 +34,6 @@ extension Table {
         )
     }
 
-    /// An upsert statement for one or more table rows.
-    ///
-    /// - Parameters:
-    ///   - columns: Columns to insert.
-    ///   - values: A builder of row values for the given columns.
-    ///   - conflictTargets: Indexed columns to target for conflict resolution.
-    ///   - targetFilter: A filter to apply to conflict target columns.
-    ///   - updates: Updates to perform in an upsert clause should the insert conflict with an
-    ///     existing row.
-    ///   - updateFilter: A filter to apply to the update clause.
-    /// - Returns: An insert statement.
     public static func insert<T1, each T2>(
         _ columns: (TableColumns) -> TableColumns = { $0 },
         @InsertValuesBuilder<Self> values: () -> [[QueryFragment]],
@@ -166,17 +58,6 @@ extension Table {
         }
     }
 
-    /// An upsert statement for one or more table rows.
-    ///
-    /// - Parameters:
-    ///   - columns: Columns to insert.
-    ///   - values: A builder of row values for the given columns.
-    ///   - conflictTargets: Indexed columns to target for conflict resolution.
-    ///   - targetFilter: A filter to apply to conflict target columns.
-    ///   - updates: Updates to perform in an upsert clause should the insert conflict with an
-    ///     existing row.
-    ///   - updateFilter: A filter to apply to the update clause.
-    /// - Returns: An insert statement.
     public static func insert<T1, each T2>(
         _ columns: (TableColumns) -> TableColumns = { $0 },
         @InsertValuesBuilder<Self> values: () -> [[QueryFragment]],
@@ -199,60 +80,6 @@ extension Table {
         )
     }
 
-    /// An insert statement for one or more table rows.
-    ///
-    /// This function can be used to create an insert statement for a specified set of columns.
-    ///
-    /// ```swift
-    /// Tag.insert {
-    ///   $0.title
-    /// } values: {
-    ///   "car"
-    /// }
-    /// // INSERT INTO "tags" ("title")
-    /// // VALUES ('car')
-    /// ```
-    ///
-    /// It can also be used to insert multiple rows in a single statement.
-    ///
-    /// ```swift
-    /// let tags = ["car", "kids", "someday", "optional"]
-    /// Tag.insert {
-    ///   $0.title
-    /// } values: {
-    ///   tags
-    /// }
-    /// let tags = ["car", "kids", "someday", "optional"]
-    /// Tag.insert { tags }
-    /// // INSERT INTO "tags" ("title")
-    /// // VALUES ('car'), ('kids'), ('someday'), ('optional')
-    /// ```
-    ///
-    /// The `values` trailing closure is a result builder that will insert any number of expressions,
-    /// one after the other, and supports basic control flow statements.
-    ///
-    /// ```swift
-    /// Tag.insert {
-    ///   $0.title
-    /// } values: {
-    ///   if vehicleOwner {
-    ///     "car"
-    ///   }
-    ///   "kids"
-    ///   "someday"
-    ///   "optional"
-    /// }
-    /// // INSERT INTO "tags" ("title")
-    /// // VALUES ('car'), ('kids'), ('someday'), ('optional')
-    /// ```
-    ///
-    /// - Parameters:
-    ///   - columns: Columns to insert.
-    ///   - values: A builder of row values for the given columns.
-    ///   - updates: Updates to perform in an upsert clause should the insert conflict with an
-    ///     existing row.
-    ///   - updateFilter: A filter to apply to the update clause.
-    /// - Returns: An insert statement.
     public static func insert<V1: _TableColumnExpression, each V2: _TableColumnExpression>(
         _ columns: (TableColumns) -> (V1, repeat each V2),
         @InsertValuesBuilder<(V1.Value, repeat (each V2).Value)>
@@ -271,15 +98,6 @@ extension Table {
         )
     }
 
-    /// An insert statement for one or more table rows.
-    ///
-    /// - Parameters:
-    ///   - columns: Columns to insert.
-    ///   - values: A builder of row values for the given columns.
-    ///   - updates: Updates to perform in an upsert clause should the insert conflict with an
-    ///     existing row.
-    ///   - updateFilter: A filter to apply to the update clause.
-    /// - Returns: An insert statement.
     public static func insert<V1: _TableColumnExpression, each V2: _TableColumnExpression>(
         _ columns: (TableColumns) -> (V1, repeat each V2),
         @InsertValuesBuilder<(V1.Value, repeat (each V2).Value)>
@@ -296,17 +114,6 @@ extension Table {
         )
     }
 
-    /// An upsert statement for one or more table rows.
-    ///
-    /// - Parameters:
-    ///   - columns: Columns to insert.
-    ///   - values: A builder of row values for the given columns.
-    ///   - conflictTargets: Indexed columns to target for conflict resolution.
-    ///   - targetFilter: A filter to apply to conflict target columns.
-    ///   - updates: Updates to perform in an upsert clause should the insert conflict with an
-    ///     existing row.
-    ///   - updateFilter: A filter to apply to the update clause.
-    /// - Returns: An insert statement.
     public static func insert<
         V1: _TableColumnExpression,
         each V2: _TableColumnExpression,
@@ -335,17 +142,6 @@ extension Table {
         }
     }
 
-    /// An upsert statement for one or more table rows.
-    ///
-    /// - Parameters:
-    ///   - columns: Columns to insert.
-    ///   - values: A builder of row values for the given columns.
-    ///   - conflictTargets: Indexed columns to target for conflict resolution.
-    ///   - targetFilter: A filter to apply to conflict target columns.
-    ///   - updates: Updates to perform in an upsert clause should the insert conflict with an
-    ///     existing row.
-    ///   - updateFilter: A filter to apply to the update clause.
-    /// - Returns: An insert statement.
     public static func insert<
         V1: _TableColumnExpression,
         each V2: _TableColumnExpression,
@@ -398,18 +194,6 @@ extension Table {
         )
     }
 
-    /// An insert statement for a table selection.
-    ///
-    /// This function can be used to create an insert statement for the results of a ``Select``
-    /// statement.
-    ///
-    /// - Parameters:
-    ///   - columns: Columns values to be inserted.
-    ///   - selection: A statement that selects the values to be inserted.
-    ///   - updates: Updates to perform in an upsert clause should the insert conflict with an
-    ///     existing row.
-    ///   - updateFilter: A filter to apply to the update clause.
-    /// - Returns: An insert statement.
     public static func insert<
         V1: _TableColumnExpression,
         each V2: _TableColumnExpression
@@ -430,8 +214,6 @@ extension Table {
         )
     }
 
-    // NB: This overload is required due to a parameter pack bug.
-    /// An insert statement for a table selection.
     public static func insert<V1: _TableColumnExpression>(
         _ columns: (TableColumns) -> V1,
         select selection: () -> some PartialSelectStatement<V1.Value>,
@@ -449,18 +231,6 @@ extension Table {
         )
     }
 
-    /// An insert statement for a table selection.
-    ///
-    /// This function can be used to create an insert statement for the results of a ``Select``
-    /// statement.
-    ///
-    /// - Parameters:
-    ///   - columns: Columns values to be inserted.
-    ///   - selection: A statement that selects the values to be inserted.
-    ///   - updates: Updates to perform in an upsert clause should the insert conflict with an
-    ///     existing row.
-    ///   - updateFilter: A filter to apply to the update clause.
-    /// - Returns: An insert statement.
     public static func insert<
         V1: _TableColumnExpression,
         each V2: _TableColumnExpression
@@ -479,20 +249,6 @@ extension Table {
         )
     }
 
-    /// An insert statement for a table selection.
-    ///
-    /// This function can be used to create an insert statement for the results of a ``Select``
-    /// statement.
-    ///
-    /// - Parameters:
-    ///   - columns: Columns values to be inserted.
-    ///   - selection: A statement that selects the values to be inserted.
-    ///   - conflictTargets: Indexed columns to target for conflict resolution.
-    ///   - targetFilter: A filter to apply to conflict target columns.
-    ///   - updates: Updates to perform in an upsert clause should the insert conflict with an
-    ///     existing row.
-    ///   - updateFilter: A filter to apply to the update clause.
-    /// - Returns: An insert statement.
     public static func insert<
         V1: _TableColumnExpression,
         each V2: _TableColumnExpression,
@@ -520,8 +276,6 @@ extension Table {
         }
     }
 
-    // NB: This overload is required due to a parameter pack bug.
-    /// An insert statement for a table selection.
     public static func insert<
         V1: _TableColumnExpression,
         T1: _TableColumnExpression,
@@ -548,20 +302,6 @@ extension Table {
         }
     }
 
-    /// An insert statement for a table selection.
-    ///
-    /// This function can be used to create an insert statement for the results of a ``Select``
-    /// statement.
-    ///
-    /// - Parameters:
-    ///   - columns: Columns values to be inserted.
-    ///   - selection: A statement that selects the values to be inserted.
-    ///   - conflictTargets: Indexed columns to target for conflict resolution.
-    ///   - targetFilter: A filter to apply to conflict target columns.
-    ///   - updates: Updates to perform in an upsert clause should the insert conflict with an
-    ///     existing row.
-    ///   - updateFilter: A filter to apply to the update clause.
-    /// - Returns: An insert statement.
     public static func insert<
         V1: _TableColumnExpression,
         each V2: _TableColumnExpression,
@@ -587,8 +327,6 @@ extension Table {
         )
     }
 
-    // NB: This overload is required due to a parameter pack bug.
-    /// An insert statement for a table selection.
     public static func insert<
         V1: _TableColumnExpression,
         T1: _TableColumnExpression,
@@ -613,8 +351,6 @@ extension Table {
         )
     }
 
-    // NB: We should constrain these generics `where Root == Self` when Swift supports same-type
-    //     constraints in parameter packs.
     private static func _insert<
         each Value: _TableColumnExpression,
         each ConflictTarget: _TableColumnExpression
@@ -640,16 +376,6 @@ extension Table {
         )
     }
 
-    /// An insert statement for a table's default values.
-    ///
-    /// For example:
-    ///
-    /// ```swift
-    /// Reminder.insert()
-    /// // INSERT INTO "reminders" DEFAULT VALUES
-    /// ```
-    ///
-    /// - Returns: An insert statement.
     public static func insert() -> InsertOf<Self> {
         _insert(
             columnNames: [],
@@ -661,7 +387,6 @@ extension Table {
         )
     }
 
-    /// Constructs an insert statement from the given column names, values, and conflict targets.
     public static func _insert<each ConflictTarget: _TableColumnExpression>(
         columnNames: [String],
         values: InsertValues,

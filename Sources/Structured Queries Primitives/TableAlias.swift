@@ -1,123 +1,54 @@
-// swiftlint:disable no_any_protocol_existential
-// REASON: SQL AST storage intentionally erases heterogeneous query and table conformers.
-
 import Structured_Queries_Primitives_Support
 
-/// Internal protocol for TableAlias to expose quote information.
-///
-/// This allows QueryFragment interpolation to check whether an alias should be quoted.
 public protocol _TableAliasQuoteInfo {
     static var shouldQuoteAlias: Bool { get }
 }
 
-/// A type identifying a table alias.
-///
-/// Conform to this protocol to provide an alias to a table.
-///
-/// This protocol contains a single, optional requirement, ``aliasName``, which is the string used
-/// in the `AS` clause to identify the table alias. When this requirement is omitted, it will
-/// default to a lowercase, plural version of the type name, similar to how the `@Table` macro
-/// generates a default table name (_e.g._ `RemindersList` becomes `"remindersLists"`).
-///
-/// ```swift
-/// enum Referrer: AliasName {}
-///
-/// Referrer.aliasName  // "referrers"
-/// ```
-///
-/// See ``Table/as(_:)`` for more information on using this conformance.
 public protocol AliasName {
-    /// The string used to alias a table, _e.g._ `"tableName" AS "aliasName"`.
+
     static var aliasName: String { get }
 
-    /// Whether the alias name should be quoted in SQL output.
-    ///
-    /// Most aliases are regular identifiers and should be quoted (the default).
-    /// However, some aliases represent SQL keywords (like PostgreSQL's NEW/OLD trigger
-    /// pseudo-records) and must remain unquoted.
     static var shouldQuote: Bool { get }
 }
 
 extension AliasName {
-    /// A default alias name derived from a lowercase, pluralized form of the type name.
+
     public static var aliasName: String {
         _typeName(Self.self, qualified: false).lowerCamelCased().pluralized()
     }
 
-    /// Default: quote all alias names.
     public static var shouldQuote: Bool { true }
 }
 
 extension Table {
-    /// A table alias of this table type.
-    ///
-    /// This is useful for building queries where a table is joined multiple times. For example, a
-    /// "users" table may have an optional `referrerID` column that points to another row in the
-    /// table:
-    ///
-    /// ```swift
-    /// @Table
-    /// struct User {
-    ///   let id: Int
-    ///   var name = ""
-    ///   var referrerID: Int?
-    /// }
-    /// ```
-    ///
-    /// …and you may want to join on this constraint.
-    ///
-    /// To do so, define an ``AliasName`` for referrers and then build the appropriate query using
-    /// `as`:
-    ///
-    /// ```swift
-    /// enum Referrer: AliasName {}
-    ///
-    /// let usersWithReferrers = User
-    ///   .join(User.as(Referrer.self).all) { $0.referrerID == $1.id }
-    ///   .select { ($0.name, $1.name) }
-    /// // SELECT "users"."name", "referrers"."name"
-    /// // FROM "users"
-    /// // JOIN "users" AS "referrers"
-    /// // ON "users"."referrerID" = "referrers"."id"
-    /// ```
-    ///
-    /// - Parameter aliasName: An alias name for this table.
-    /// - Returns: A table alias of this table type.
+
     public static func `as`<Name: AliasName>(_ aliasName: Name.Type) -> TableAlias<Self, Name>.Type
     {
         TableAlias.self
     }
 }
 
-/// An aliased table.
-///
-/// This type is returned from ``Table/as(_:)``.
 public struct TableAlias<
     Base: Table,
-    Name: AliasName  // We should use a value generic here when it's possible.
+    Name: AliasName
 >: _OptionalPromotable, Table, _TableAliasQuoteInfo {
 
-    /// The columns of this aliased table.
     public static var columns: TableColumns {
         TableColumns()
     }
 
-    /// The name of the underlying base table.
     public static var tableName: String {
         Base.tableName
     }
 
-    /// The alias name applied to the base table.
     public static var tableAlias: String? {
         Name.aliasName
     }
 
-    /// Exposes whether the alias name should be quoted.
     public static var shouldQuoteAlias: Bool {
         Name.shouldQuote
     }
 
-    /// A statement selecting all columns from the aliased table.
     public static var all: SelectOf<Self> {
         var select = unsafeBitCast(Base.all.asSelect(), to: SelectOf<Self>.self)
         select.clauses.columns = select.clauses.columns.map {
@@ -143,10 +74,9 @@ public struct TableAlias<
         base[keyPath: keyPath]
     }
 
-    /// A type representing the aliased table's columns.
     @dynamicMemberLookup
     public struct TableColumns: Sendable, TableDefinition {
-        /// All columns of the aliased table.
+
         public static var allColumns: [any TableColumnExpression] {
             #if compiler(>=6.3)
                 return Base.TableColumns.allColumns.map { $0._aliased(Name.self) }
@@ -158,7 +88,6 @@ public struct TableAlias<
             #endif
         }
 
-        /// The writable columns of the aliased table.
         public static var writableColumns: [any WritableTableColumnExpression] {
             #if compiler(>=6.3)
                 return Base.TableColumns.writableColumns.map { $0._aliased(Name.self) }
@@ -172,10 +101,8 @@ public struct TableAlias<
             #endif
         }
 
-        /// The table type these columns describe.
         public typealias QueryValue = TableAlias
 
-        /// Accesses an aliased table column via dynamic member lookup.
         public subscript<Member>(
             dynamicMember keyPath: KeyPath<Base.TableColumns, TableColumn<Base, Member>>
         ) -> TableColumn<TableAlias, Member> {
@@ -186,7 +113,6 @@ public struct TableAlias<
             )
         }
 
-        /// Accesses an aliased generated column via dynamic member lookup.
         public subscript<Member>(
             dynamicMember keyPath: KeyPath<Base.TableColumns, GeneratedColumn<Base, Member>>
         ) -> GeneratedColumn<TableAlias, Member> {
@@ -197,7 +123,6 @@ public struct TableAlias<
             )
         }
 
-        /// Accesses an aliased column group via dynamic member lookup.
         public subscript<Member>(
             dynamicMember keyPath: KeyPath<Base.TableColumns, ColumnGroup<Base, Member>>
         ) -> ColumnGroup<TableAlias, Member> {
@@ -207,19 +132,16 @@ public struct TableAlias<
         }
     }
 
-    /// A selection of columns from the aliased table.
     public struct Selection: TableExpression {
-        /// The table type this selection produces.
+
         public typealias QueryValue = TableAlias
 
         fileprivate var base: Base.Selection
 
-        /// Creates a selection wrapping the base table's selection.
         public init(_ base: Base.Selection) {
             self.base = base
         }
 
-        /// All column expressions in this selection.
         public var allColumns: [any QueryExpression] {
             base.allColumns
         }
@@ -227,14 +149,14 @@ public struct TableAlias<
 }
 
 extension TableAlias: PrimaryKeyedTable where Base: PrimaryKeyedTable {
-    /// The draft type of this aliased primary-keyed table.
+
     public typealias Draft = TableAlias<Base.Draft, Name>
 }
 
 extension TableAlias: TableDraft where Base: TableDraft {
-    /// The primary table type corresponding to this aliased draft.
+
     public typealias PrimaryTable = TableAlias<Base.PrimaryTable, Name>
-    /// Creates an aliased draft from the given aliased primary table.
+
     public init(_ primaryTable: TableAlias<Base.PrimaryTable, Name>) {
         self.init(base: Base(primaryTable.base))
     }
@@ -242,38 +164,32 @@ extension TableAlias: TableDraft where Base: TableDraft {
 
 extension TableAlias.TableColumns: PrimaryKeyedTableDefinition
 where Base.TableColumns: PrimaryKeyedTableDefinition {
-    /// The primary key column of the aliased table.
+
     public var primaryKey: PrimaryColumn {
         PrimaryColumn()
     }
 
-    /// The primary key type of the underlying base table.
     public typealias PrimaryKey = Base.PrimaryKey
 
-    /// The primary key column expression of the aliased table.
     public struct PrimaryColumn: _TableColumnExpression {
     }
 }
 
 extension TableAlias.TableColumns.PrimaryColumn
 where Base.TableColumns: PrimaryKeyedTableDefinition {
-    /// The aliased table type this column belongs to.
+
     public typealias Root = TableAlias
 
-    /// The value type of the primary key column.
     public typealias Value = Base.PrimaryKey
 
-    /// The underlying column names of the primary key.
     public var _names: [String] {
         Base.columns.primaryKey._names
     }
 
-    /// A key path to the primary key's query output on the aliased table.
     public var keyPath: KeyPath<TableAlias, Base.PrimaryKey.QueryOutput> {
         \.[member: \Base.PrimaryKey.self, column: Base.columns.primaryKey.keyPath]
     }
 
-    /// The SQL fragment referencing the aliased primary key column.
     public var queryFragment: QueryFragment {
         Base.columns.primaryKey._names
             .map {
@@ -288,17 +204,15 @@ where Base.TableColumns: PrimaryKeyedTableDefinition {
 
 extension TableAlias.TableColumns.PrimaryColumn: TableColumnExpression
 where Base.TableColumns.PrimaryColumn: TableColumnExpression {
-    /// The name of the primary key column.
+
     public var name: String {
         Base.columns.primaryKey.name
     }
 
-    /// The default value of the primary key column, if any.
     public var defaultValue: Base.PrimaryKey.QueryOutput? {
         Base.columns.primaryKey.defaultValue
     }
 
-    /// Returns a further-aliased column expression for this primary key.
     public func _aliased<N: AliasName>(
         _ alias: N.Type
     ) -> any TableColumnExpression<TableAlias<TableAlias, N>, Base.PrimaryKey> {
@@ -308,7 +222,7 @@ where Base.TableColumns.PrimaryColumn: TableColumnExpression {
 
 extension TableAlias.TableColumns.PrimaryColumn: WritableTableColumnExpression
 where Base.TableColumns.PrimaryColumn: WritableTableColumnExpression {
-    /// Returns a further-aliased writable column expression for this primary key.
+
     public func _aliased<N: AliasName>(
         _ alias: N.Type
     ) -> any WritableTableColumnExpression<TableAlias<TableAlias, N>, Base.PrimaryKey> {
@@ -317,54 +231,44 @@ where Base.TableColumns.PrimaryColumn: WritableTableColumnExpression {
 }
 
 extension TableAlias: QueryExpression where Base: QueryExpression {
-    /// The query value type of the underlying base expression.
+
     public typealias QueryValue = Base.QueryValue
 
-    /// The SQL fragment of the underlying base expression.
     public var queryFragment: QueryFragment {
         base.queryFragment
     }
 
-    /// The number of columns spanned by this expression.
     public static var _columnWidth: Int {
         Base._columnWidth
     }
 
-    /// All column expressions of the underlying base expression.
     public var _allColumns: [any QueryExpression] {
         base._allColumns
     }
 }
 
 extension TableAlias: QueryBindable where Base: QueryBindable {
-    /// The query binding of the underlying base value.
+
     public var queryBinding: QueryBinding {
         base.queryBinding
     }
 }
 
-// swiftlint:disable typed_throws_required
-// reason: `init(decoder:) throws` mirrors the `QueryDecodable` protocol requirement
-// (heterogeneous-backend decode errors); `init(from:) throws` / `encode(to:) throws`
-// below mirror the stdlib `Decodable`/`Encodable` requirement signatures. [API-ERR-006]
-// exception (rule-exemptions protocol-requirement shape).
 extension TableAlias: QueryDecodable where Base: QueryDecodable {
-    /// Creates an aliased table by decoding the base value from the given decoder.
+
     public init(decoder: inout some QueryDecoder) throws {
         try self.init(base: Base(decoder: &decoder))
     }
 }
 
 extension TableAlias: QueryRepresentable where Base: QueryRepresentable {
-    /// The query output type of this aliased table.
+
     public typealias QueryOutput = Base
 
-    /// Creates an aliased table wrapping the given query output.
     public init(queryOutput: Base) {
         self.init(base: queryOutput)
     }
 
-    /// The base value represented by this aliased table.
     public var queryOutput: Base {
         base
     }
@@ -377,7 +281,7 @@ extension TableAlias: Equatable where Base: Equatable {}
 extension TableAlias: Hashable where Base: Hashable {}
 
 extension TableAlias: Decodable where Base: Decodable {
-    /// Creates an aliased table by decoding the base value.
+
     public init(from decoder: Decoder) throws {
         do {
             self.init(base: try decoder.singleValueContainer().decode(Base.self))
@@ -388,7 +292,7 @@ extension TableAlias: Decodable where Base: Decodable {
 }
 
 extension TableAlias: Encodable where Base: Encodable {
-    /// Encodes the underlying base value into the given encoder.
+
     public func encode(to encoder: Encoder) throws {
         do {
             var container = encoder.singleValueContainer()
@@ -398,7 +302,6 @@ extension TableAlias: Encodable where Base: Encodable {
         }
     }
 }
-// swiftlint:enable typed_throws_required
 
 extension QueryFragment {
     fileprivate func replacingOccurrences<T: Table, A: AliasName>(
@@ -425,8 +328,7 @@ extension QueryFragment {
 }
 
 extension String {
-    /// Foundation-free equivalent of `replacingOccurrences(of:with:)`: replaces every
-    /// non-overlapping occurrence of `target`, scanning left to right.
+
     fileprivate func replacingAllOccurrences(of target: String, with replacement: String) -> String
     {
         guard !target.isEmpty else { return self }
@@ -449,5 +351,3 @@ extension String {
         return result
     }
 }
-
-// swiftlint:enable no_any_protocol_existential

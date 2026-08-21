@@ -1,19 +1,5 @@
-// MARK: - FULL OUTER JOIN Operations
-
 extension Select {
-    // MARK: Primary Overload - Most General Case
 
-    /// Creates a new select statement from this one by full-joining another table.
-    ///
-    /// This is the primary overload handling the most general case where both
-    /// the caller and other select may have columns and joins.
-    ///
-    /// **Type Transformation:** Optionalizes all columns/joins from both sides.
-    ///
-    /// - Parameters:
-    ///   - other: A select statement for another table.
-    ///   - constraint: The constraint describing the join.
-    /// - Returns: A new select statement that full-joins the given table.
     public func fullJoin<
         each C1: QueryRepresentable,
         each C2: QueryRepresentable,
@@ -60,16 +46,6 @@ extension Select {
         )
     }
 
-    // MARK: Optimization 1 - Other Has No Joins
-
-    /// Creates a new select statement from this one by full-joining another table.
-    ///
-    /// Optimization for when the other select has no joins (`other.Joins == ()`).
-    ///
-    /// - Parameters:
-    ///   - other: A select statement for another table.
-    ///   - constraint: The constraint describing the join.
-    /// - Returns: A new select statement that full-joins the given table.
     @_disfavoredOverload
     @_documentation(visibility: private)
     public func fullJoin<
@@ -114,16 +90,6 @@ extension Select {
         )
     }
 
-    // MARK: Optimization 2 - Other Has No Columns
-
-    /// Creates a new select statement from this one by full-joining another table.
-    ///
-    /// Optimization for when the other select has no columns (`other.Columns == ()`).
-    ///
-    /// - Parameters:
-    ///   - other: A select statement for another table.
-    ///   - constraint: The constraint describing the join.
-    /// - Returns: A new select statement that full-joins the given table.
     @_disfavoredOverload
     @_documentation(visibility: private)
     public func fullJoin<F: Table, each J: Table>(
@@ -157,18 +123,6 @@ extension Select {
         )
     }
 
-    // MARK: Where Delegation - Caller Is SelectOf
-
-    /// Creates a new select statement from this one by full-joining another table.
-    ///
-    /// This overload handles delegation from `Where.fullJoin()` when the caller
-    /// is a SelectOf (no columns, no joins). It enables use of `some SelectStatement`
-    /// instead of `any` for better type inference.
-    ///
-    /// - Parameters:
-    ///   - other: A select statement for another table.
-    ///   - constraint: The constraint describing the join.
-    /// - Returns: A new select statement that full-joins the given table.
     @_disfavoredOverload
     @_documentation(visibility: private)
     public func fullJoin<each C: QueryRepresentable, F: Table, each J: Table>(
@@ -206,17 +160,6 @@ extension Select {
         )
     }
 
-    // MARK: SelectOf Specialization - Both Empty (Most Specific)
-
-    /// Creates a new select statement from this one by full-joining another table.
-    ///
-    /// Most specific overload for the common case of `SelectOf.fullJoin(SelectOf)`.
-    /// NOT marked `@_disfavoredOverload` so it's preferred for optimal type inference.
-    ///
-    /// - Parameters:
-    ///   - other: A select statement for another table.
-    ///   - constraint: The constraint describing the join.
-    /// - Returns: A new select statement that full-joins the given table.
     @_documentation(visibility: private)
     public func fullJoin<F: Table>(
         _ other: some SelectStatementOf<F>,
@@ -247,16 +190,6 @@ extension Select {
         )
     }
 
-    // MARK: Legacy - Caller Has Joins, Other Is SelectOf
-
-    /// Creates a new select statement from this one by full-joining another table.
-    ///
-    /// Legacy overload for when the caller has existing joins but other is SelectOf.
-    ///
-    /// - Parameters:
-    ///   - other: A select statement for another table.
-    ///   - constraint: The constraint describing the join.
-    /// - Returns: A new select statement that full-joins the given table.
     @_disfavoredOverload
     @_documentation(visibility: private)
     public func fullJoin<F: Table>(

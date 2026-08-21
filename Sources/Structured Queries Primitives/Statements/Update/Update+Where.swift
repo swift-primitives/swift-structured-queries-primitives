@@ -1,15 +1,5 @@
-// Overload set disambiguated by generic constraints and @_disfavoredOverload ranking; renaming would break the SQL-mirroring API.
-// swift-format-ignore: AmbiguousTrailingClosureOverload
 extension Update {
-    /// Adds a condition to an update statement.
-    ///
-    /// ```swift
-    /// Reminder.update { $0.isFlagged = true }.where(\.isCompleted)
-    /// // UPDATE "reminders" SET "isFlagged" = 1 WHERE "reminders"."isCompleted"
-    /// ```
-    ///
-    /// - Parameter keyPath: A key path to a Boolean expression to filter by.
-    /// - Returns: A statement with the added predicate.
+
     public func `where`(
         _ keyPath: KeyPath<From.TableColumns, some QueryExpression<some _OptionalPromotable<Bool?>>>
     ) -> Self {
@@ -18,10 +8,6 @@ extension Update {
         return update
     }
 
-    /// Adds a condition to an update statement.
-    ///
-    /// - Parameter predicate: A closure that returns a Boolean expression to filter by.
-    /// - Returns: A statement with the added predicate.
     @_disfavoredOverload
     public func `where`(
         _ predicate: (From.TableColumns) -> some QueryExpression<some _OptionalPromotable<Bool?>>
@@ -31,11 +17,6 @@ extension Update {
         return update
     }
 
-    /// Adds a condition to an update statement.
-    ///
-    /// - Parameter predicate: A result builder closure that returns a Boolean expression to filter
-    ///   by.
-    /// - Returns: A statement with the added predicate.
     public func `where`(
         @QueryFragmentBuilder<Bool> _ predicate: (From.TableColumns) -> [QueryFragment]
     ) -> Self {

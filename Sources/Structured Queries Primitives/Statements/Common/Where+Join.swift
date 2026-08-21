@@ -1,10 +1,5 @@
 extension Where {
-    /// A select statement for the filtered table joined to another table.
-    ///
-    /// - Parameters:
-    ///   - other: A select statement for another table.
-    ///   - constraint: The constraint describing the join.
-    /// - Returns: A select statement that joins the given table.
+
     public func join<each C: QueryRepresentable, F: Table, each J: Table>(
         _ other: some SelectStatement<(repeat each C), F, (repeat each J)>,
         on constraint: (
@@ -14,12 +9,6 @@ extension Where {
         asSelect().join(other, on: constraint)
     }
 
-    /// A select statement for the filtered table left-joined to another table.
-    ///
-    /// - Parameters:
-    ///   - other: A select statement for another table.
-    ///   - constraint: The constraint describing the join.
-    /// - Returns: A select statement that left-joins the given table.
     public func leftJoin<each C: QueryRepresentable, F: Table, each J: Table>(
         _ other: some SelectStatement<(repeat each C), F, (repeat each J)>,
         on constraint: (
@@ -33,12 +22,6 @@ extension Where {
         return asSelect().leftJoin(other, on: constraint)
     }
 
-    /// A select statement for the filtered table right-joined to another table.
-    ///
-    /// - Parameters:
-    ///   - other: A select statement for another table.
-    ///   - constraint: The constraint describing the join.
-    /// - Returns: A select statement that right-joins the given table.
     public func rightJoin<each C: QueryRepresentable, F: Table, each J: Table>(
         _ other: some SelectStatement<(repeat each C), F, (repeat each J)>,
         on constraint: (
@@ -48,12 +31,6 @@ extension Where {
         return asSelect().rightJoin(other, on: constraint)
     }
 
-    /// A select statement for the filtered table full-joined to another table.
-    ///
-    /// - Parameters:
-    ///   - other: A select statement for another table.
-    ///   - constraint: The constraint describing the join.
-    /// - Returns: A select statement that full-joins the given table.
     public func fullJoin<each C: QueryRepresentable, F: Table, each J: Table>(
         _ other: some SelectStatement<(repeat each C), F, (repeat each J)>,
         on constraint: (

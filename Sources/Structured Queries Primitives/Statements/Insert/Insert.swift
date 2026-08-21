@@ -1,15 +1,13 @@
 import Structured_Queries_Primitives_Support
 
-// Helper function to check if a QueryFragment represents NULL
 private func isNullBinding(_ fragment: QueryFragment) -> Bool {
-    // Empty fragment typically means NULL
+
     if fragment.segments.isEmpty {
         return true
     }
 
-    // Check each segment
     for segment in fragment.segments {
-        // Check for null binding
+
         if case .binding(.null) = segment {
             return true
         }
@@ -18,22 +16,12 @@ private func isNullBinding(_ fragment: QueryFragment) -> Bool {
     return false
 }
 
-/// The values clause of an insert statement, either default, explicit rows, or a subquery.
 public enum InsertValues: Sendable {
     case `default`
     case values([[QueryFragment]])
     case select(QueryFragment)
 }
 
-// Overload set disambiguated by generic constraints and @_disfavoredOverload ranking; renaming would break the SQL-mirroring API.
-// swift-format-ignore: AmbiguousTrailingClosureOverload
-/// An `INSERT` statement.
-///
-/// This type of statement is returned from the
-/// `[Table.insert]<doc:Table/insert(or:_:values:onConflict:where:doUpdate:where:)>` family of
-/// functions.
-///
-/// To learn more, see <doc:InsertStatements>.
 public struct Insert<Into: Table, Returning>: Sendable {
     var columnNames: [String]
     var conflictTargetColumnNames: [String]
@@ -43,10 +31,6 @@ public struct Insert<Into: Table, Returning>: Sendable {
     var updateFilter: [QueryFragment]
     var returning: [QueryFragment]
 
-    /// Adds a returning clause to an insert statement.
-    ///
-    /// - Parameter selection: Columns to return.
-    /// - Returns: A statement with a returning clause.
     public func returning<each QueryValue: QueryRepresentable>(
         _ selection: (From.TableColumns) -> (repeat TableColumn<From, each QueryValue>)
     ) -> Insert<Into, (repeat each QueryValue)> {
@@ -65,19 +49,6 @@ public struct Insert<Into: Table, Returning>: Sendable {
         )
     }
 
-    // NB: This overload allows for single-column returns like 'returning(\.id)'.
-    /// Adds a returning clause to an insert statement.
-    ///
-    /// ```swift
-    /// Reminder.insert { draft }.returning(\.id)
-    /// // INSERT INTO "reminders" (...) VALUES (...) RETURNING "reminders"."id"
-    ///
-    /// Reminder.insert { draft }.returning { $0.id }
-    /// // INSERT INTO "reminders" (...) VALUES (...) RETURNING "reminders"."id"
-    /// ```
-    ///
-    /// - Parameter selection: A single column to return.
-    /// - Returns: A statement with a returning clause.
     public func returning<QueryValue: QueryRepresentable>(
         _ selection: (From.TableColumns) -> TableColumn<From, QueryValue>
     ) -> Insert<Into, QueryValue> {
@@ -93,11 +64,6 @@ public struct Insert<Into: Table, Returning>: Sendable {
         )
     }
 
-    // NB: This overload allows for 'returning(\.self)'.
-    /// Adds a returning clause to an insert statement.
-    ///
-    /// - Parameter selection: Columns to return.
-    /// - Returns: A statement with a returning clause.
     @_documentation(visibility: private)
     @_disfavoredOverload
     public func returning(
@@ -120,12 +86,11 @@ public struct Insert<Into: Table, Returning>: Sendable {
 }
 
 extension Insert: Statement {
-    /// The query value type produced by this insert statement, its `Returning` type.
+
     public typealias QueryValue = Returning
-    /// The table this insert statement targets, its `Into` type.
+
     public typealias From = Into
 
-    /// The complete SQL query fragment for this insert statement.
     public var query: QueryFragment {
         var query: QueryFragment = "INSERT"
         query.append(" INTO ")
@@ -209,5 +174,4 @@ extension Insert: Statement {
     }
 }
 
-/// A convenience type alias for a non-`RETURNING` `Insert`.
 public typealias InsertOf<Into: Table> = Insert<Into, ()>

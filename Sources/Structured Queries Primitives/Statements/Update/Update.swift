@@ -1,11 +1,5 @@
 import Structured_Queries_Primitives_Support
 
-/// An `UPDATE` statement.
-///
-/// This type of statement is constructed from ``Table/update(or:set:)`` and
-/// ``Where/update(or:set:)``.
-///
-/// To learn more, see <doc:UpdateStatements>.
 public struct Update<From: Table, Returning>: Sendable {
     var isEmpty: Bool
     var updates: Updates<From>
@@ -13,14 +7,12 @@ public struct Update<From: Table, Returning>: Sendable {
     var returning: [QueryFragment] = []
 }
 
-/// A convenience type alias for a non-`RETURNING` `Update`.
 public typealias UpdateOf<Base: Table> = Update<Base, ()>
 
 extension Update: Statement {
-    /// The query value type produced by this update's RETURNING clause.
+
     public typealias QueryValue = Returning
 
-    /// The complete SQL text for this UPDATE statement.
     public var query: QueryFragment {
         guard !isEmpty, !updates.isEmpty
         else { return "" }

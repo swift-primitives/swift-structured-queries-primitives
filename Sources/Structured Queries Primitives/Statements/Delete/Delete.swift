@@ -1,24 +1,17 @@
 import Structured_Queries_Primitives_Support
 
-/// A `DELETE` statement.
-///
-/// This type of statement is constructed from ``Table/delete()`` and ``Where/delete()``.
-///
-/// To learn more, see <doc:DeleteStatements>.
 public struct Delete<From: Table, Returning>: Sendable {
     var isEmpty: Bool
     var `where`: [QueryFragment] = []
     var returning: [QueryFragment] = []
 }
 
-/// A convenience type alias for a non-`RETURNING` `Delete`.
 public typealias DeleteOf<From: Table> = Delete<From, ()>
 
 extension Delete: Statement {
-    /// The query value type produced by this delete's RETURNING clause.
+
     public typealias QueryValue = Returning
 
-    /// The complete SQL text for this DELETE statement.
     public var query: QueryFragment {
         guard !isEmpty else { return "" }
         var query: QueryFragment = "DELETE FROM "

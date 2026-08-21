@@ -1,27 +1,13 @@
-/// Type-safe builder for window specifications (OVER clause).
-///
-/// Window specifications define how to partition and order data for window functions.
-/// This is a database-agnostic type that can be used across different SQL databases.
-///
-/// ## Example Usage
-///
-/// ```swift
-/// WindowSpec()
-///     .partition(by: columns.category)
-///     .order(by: columns.price.desc())
-/// ```
 public struct WindowSpec: Sendable {
-    /// The partition-by expressions for the window.
+
     public var partitions: [QueryFragment] = []
-    /// The order-by expressions for the window.
+
     public var orderings: [QueryFragment] = []
-    /// The frame clause for the window, if any.
+
     public var frameClause: QueryFragment?
 
-    /// Creates an empty window specification.
     public init() {}
 
-    /// Creates a window specification with the given partitions, orderings, and frame clause.
     public init(
         partitions: [QueryFragment] = [],
         orderings: [QueryFragment] = [],
@@ -34,14 +20,13 @@ public struct WindowSpec: Sendable {
 }
 
 extension WindowSpec {
-    /// Add a partition expression using a single QueryExpression.
+
     public func partition(by expression: some QueryExpression) -> WindowSpec {
         var copy = self
         copy.partitions.append(expression.queryFragment)
         return copy
     }
 
-    /// Add partition expressions using a result builder closure.
     public func partition(
         @QueryFragmentBuilder<()>
         by expressions: () -> [QueryFragment]
@@ -51,12 +36,6 @@ extension WindowSpec {
         return copy
     }
 
-    /// Add an ordering expression.
-    ///
-    /// Use `.asc()` or `.desc()` on the expression to specify direction:
-    /// ```swift
-    /// WindowSpec().order(by: columns.price.desc())
-    /// ```
     public func order(
         by expression: some QueryExpression
     ) -> WindowSpec {
@@ -65,7 +44,6 @@ extension WindowSpec {
         return copy
     }
 
-    /// Add ordering expressions using a result builder closure.
     public func order(
         @QueryFragmentBuilder<()>
         by orderings: () -> [QueryFragment]
@@ -75,9 +53,6 @@ extension WindowSpec {
         return copy
     }
 
-    /// Generate the window specification fragment (without "OVER" wrapper).
-    ///
-    /// Used for WINDOW clause definitions.
     public func generateSpecificationFragment() -> QueryFragment {
         var fragment: QueryFragment = ""
 
@@ -104,9 +79,6 @@ extension WindowSpec {
         return fragment
     }
 
-    /// Generate the complete OVER clause SQL (with "OVER" wrapper).
-    ///
-    /// Used for inline window function specifications.
     public func generateOverClause() -> QueryFragment {
         var fragment: QueryFragment = "OVER ("
 
@@ -135,7 +107,6 @@ extension WindowSpec {
     }
 }
 
-/// Order direction for window function ordering.
 public enum OrderDirection: Sendable {
     case asc
     case desc

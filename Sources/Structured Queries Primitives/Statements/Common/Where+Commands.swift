@@ -1,5 +1,5 @@
 extension Where {
-    /// A delete statement for the filtered table.
+
     public func delete() -> DeleteOf<From> {
         Delete(
             isEmpty: scope == .empty,
@@ -7,10 +7,6 @@ extension Where {
         )
     }
 
-    /// An update statement for the filtered table.
-    ///
-    /// - Parameter updates: A closure describing column-wise updates to perform.
-    /// - Returns: An update statement.
     public func update(
         set updates: (inout Updates<From>) -> Void
     ) -> UpdateOf<From> {

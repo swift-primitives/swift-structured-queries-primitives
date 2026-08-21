@@ -2,11 +2,6 @@ import Structured_Queries_Primitives
 import Synchronization
 import Testing
 
-// MARK: - Fixtures
-//
-// Hand-rolled `Table` conformances: the `@Table` macro lives above L1, so test
-// fixtures conform manually.
-
 struct Row: Table {
     var count: Int
     var title: String
@@ -77,8 +72,6 @@ struct Tag: Table {
     }
 }
 
-// MARK: - Updates subscript resolution (G-1)
-
 @Suite
 struct UpdatesSubscriptTests {
     @Test func `Primary subscript vends a typed expression and records sets`() {
@@ -102,8 +95,6 @@ struct UpdatesSubscriptTests {
     }
 }
 
-// MARK: - group(by:) overload resolution (G-2)
-
 @Suite
 struct GroupByResolutionTests {
     @Test func `Single-join selects resolve group(by:)`() {
@@ -126,11 +117,9 @@ struct GroupByResolutionTests {
     }
 }
 
-// MARK: - Invalid-update-filter reporting (G-3)
-
 @Suite
 struct ReportTests {
-    /// `Sendable` wrapper capturing the reported diagnostic across the handler boundary.
+
     final class Capture: Sendable {
         let message = Mutex<String?>(nil)
     }

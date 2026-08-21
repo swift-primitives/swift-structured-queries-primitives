@@ -1,36 +1,23 @@
-// swiftlint:disable no_any_protocol_existential
-// REASON: SQL AST storage intentionally erases heterogeneous query and table conformers.
-
-/// A group of table columns.
-///
-/// Don't create instances of this value directly. Instead, use the `@Table` and `@Columns` macros
-/// to generate values of this type.
 @dynamicMemberLookup
 public struct ColumnGroup<Root: Table, Values: Table>: _TableColumnExpression
 where Values.QueryOutput == Values {
-    /// The table type whose columns this group represents.
+
     public typealias Value = Values
 
-    /// The names of all columns in the group.
     public var _names: [String] { Values.TableColumns.allColumns.map(\.name) }
 
-    /// The query value type produced by this column group.
     public typealias QueryValue = Values
 
-    /// The key path from the root table to this group's values.
     public let keyPath: KeyPath<Root, Values>
 
-    /// Creates a column group for the given key path.
     public init(keyPath: KeyPath<Root, Values>) {
         self.keyPath = keyPath
     }
 
-    /// The comma-separated query fragment for all columns in the group.
     public var queryFragment: QueryFragment {
         _allColumns.map(\.queryFragment).joined(separator: ", ")
     }
 
-    /// Accesses a table column through dynamic member lookup.
     public subscript<Member>(
         dynamicMember keyPath: KeyPath<Values.TableColumns, TableColumn<Values, Member>>
     ) -> TableColumn<Root, Member> {
@@ -42,7 +29,6 @@ where Values.QueryOutput == Values {
         )
     }
 
-    /// Accesses a generated column through dynamic member lookup.
     public subscript<Member>(
         dynamicMember keyPath: KeyPath<Values.TableColumns, GeneratedColumn<Values, Member>>
     ) -> GeneratedColumn<Root, Member> {
@@ -54,7 +40,6 @@ where Values.QueryOutput == Values {
         )
     }
 
-    /// Accesses a nested column group through dynamic member lookup.
     public subscript<Member>(
         dynamicMember keyPath: KeyPath<Values.TableColumns, ColumnGroup<Values, Member>>
     ) -> ColumnGroup<Root, Member> {
@@ -64,7 +49,6 @@ where Values.QueryOutput == Values {
         )
     }
 
-    /// All columns of the group re-keyed from `Values` to `Root`.
     public var _allColumns: [any TableColumnExpression] {
         Values.TableColumns.allColumns.map { column in
             func open<R, V>(
@@ -83,7 +67,6 @@ where Values.QueryOutput == Values {
         }
     }
 
-    /// The group's writable columns re-keyed from `Values` to `Root`.
     public var _writableColumns: [any WritableTableColumnExpression] {
         Values.TableColumns.writableColumns.map { column in
             func open<R, V>(
@@ -102,5 +85,3 @@ where Values.QueryOutput == Values {
         }
     }
 }
-
-// swiftlint:enable no_any_protocol_existential

@@ -1,28 +1,12 @@
 public import Time_Primitives
 
-// swiftlint:disable typed_throws_required
-// reason: `init(decoder:) throws` mirrors `Decodable.init(from:) throws` — the decoder is an
-// out-of-repo backend driver whose own decode errors, plus this file's `OverflowError` /
-// `DataCorruptedError`, are heterogeneous by design. [API-ERR-006] exception
-// (rule-exemptions protocol-requirement shape).
-/// A type that can decode itself from a query.
 public protocol QueryDecodable: _OptionalPromotable {
-    /// Creates a new instance by decoding from the given decoder.
-    ///
-    /// This initializer throws an error if reading from the decoder fails, or if the data read is
-    /// corrupted or otherwise invalid.
-    ///
-    /// - Parameter decoder: The decoder to read data from.
-    /// - Throws: An error from the decoder's underlying database driver, or an `OverflowError` /
-    ///   `DataCorruptedError` if the decoded data is invalid for this type.
+
     init(decoder: inout some QueryDecoder) throws
 }
 
-// Note: Array<Element: QueryDecodable> conformance (including [UInt8] for bytea)
-// is in StructuredQueriesPostgres via swift-records integration
-
 extension Double: QueryDecodable {
-    /// Creates a double by decoding from the given decoder.
+
     @inlinable
     public init(decoder: inout some QueryDecoder) throws {
         guard let result = try decoder.decode(Double.self)
@@ -32,7 +16,7 @@ extension Double: QueryDecodable {
 }
 
 extension Int64: QueryDecodable {
-    /// Creates a 64-bit integer by decoding from the given decoder.
+
     @inlinable
     public init(decoder: inout some QueryDecoder) throws {
         guard let result = try decoder.decode(Int64.self)
@@ -42,7 +26,7 @@ extension Int64: QueryDecodable {
 }
 
 extension String: QueryDecodable {
-    /// Creates a string by decoding from the given decoder.
+
     @inlinable
     public init(decoder: inout some QueryDecoder) throws {
         guard let result = try decoder.decode(String.self)
@@ -52,10 +36,10 @@ extension String: QueryDecodable {
 }
 
 extension Bool: QueryDecodable {
-    /// Creates a Boolean value by decoding from the given decoder.
+
     @inlinable
     public init(decoder: inout some QueryDecoder) throws {
-        //    self = try Int(decoder: &decoder) != 0
+
         guard let result = try decoder.decode(Bool.self)
         else { throw QueryDecodingError.missingRequiredColumn }
         self = result
@@ -63,7 +47,7 @@ extension Bool: QueryDecodable {
 }
 
 extension Instant: QueryDecodable {
-    /// Creates an instant by decoding from the given decoder.
+
     @inlinable
     public init(decoder: inout some QueryDecoder) throws {
         guard let result = try decoder.decode(Instant.self)
@@ -73,7 +57,7 @@ extension Instant: QueryDecodable {
 }
 
 extension Float: QueryDecodable {
-    /// Creates a float by decoding from the given decoder.
+
     @inlinable
     public init(decoder: inout some QueryDecoder) throws {
         try self.init(Double(decoder: &decoder))
@@ -81,7 +65,7 @@ extension Float: QueryDecodable {
 }
 
 extension Int: QueryDecodable {
-    /// Creates an integer by decoding from the given decoder.
+
     @inlinable
     public init(decoder: inout some QueryDecoder) throws {
         let n = try Int64(decoder: &decoder)
@@ -91,7 +75,7 @@ extension Int: QueryDecodable {
 }
 
 extension Int8: QueryDecodable {
-    /// Creates an 8-bit integer by decoding from the given decoder.
+
     @inlinable
     public init(decoder: inout some QueryDecoder) throws {
         let n = try Int64(decoder: &decoder)
@@ -101,7 +85,7 @@ extension Int8: QueryDecodable {
 }
 
 extension Int16: QueryDecodable {
-    /// Creates a 16-bit integer by decoding from the given decoder.
+
     @inlinable
     public init(decoder: inout some QueryDecoder) throws {
         let n = try Int64(decoder: &decoder)
@@ -111,7 +95,7 @@ extension Int16: QueryDecodable {
 }
 
 extension Int32: QueryDecodable {
-    /// Creates a 32-bit integer by decoding from the given decoder.
+
     @inlinable
     public init(decoder: inout some QueryDecoder) throws {
         let n = try Int64(decoder: &decoder)
@@ -121,7 +105,7 @@ extension Int32: QueryDecodable {
 }
 
 extension UInt: QueryDecodable {
-    /// Creates an unsigned integer by decoding from the given decoder.
+
     @inlinable
     public init(decoder: inout some QueryDecoder) throws {
         let n = try Int64(decoder: &decoder)
@@ -131,7 +115,7 @@ extension UInt: QueryDecodable {
 }
 
 extension UInt8: QueryDecodable {
-    /// Creates an 8-bit unsigned integer by decoding from the given decoder.
+
     @inlinable
     public init(decoder: inout some QueryDecoder) throws {
         let n = try Int64(decoder: &decoder)
@@ -141,7 +125,7 @@ extension UInt8: QueryDecodable {
 }
 
 extension UInt16: QueryDecodable {
-    /// Creates a 16-bit unsigned integer by decoding from the given decoder.
+
     @inlinable
     public init(decoder: inout some QueryDecoder) throws {
         let n = try Int64(decoder: &decoder)
@@ -151,7 +135,7 @@ extension UInt16: QueryDecodable {
 }
 
 extension UInt32: QueryDecodable {
-    /// Creates a 32-bit unsigned integer by decoding from the given decoder.
+
     @inlinable
     public init(decoder: inout some QueryDecoder) throws {
         let n = try Int64(decoder: &decoder)
@@ -161,7 +145,7 @@ extension UInt32: QueryDecodable {
 }
 
 extension UInt64: QueryDecodable {
-    /// Creates a 64-bit unsigned integer by decoding from the given decoder.
+
     @inlinable
     public init(decoder: inout some QueryDecoder) throws {
         try self.init(Int64(decoder: &decoder))
@@ -169,7 +153,7 @@ extension UInt64: QueryDecodable {
 }
 
 extension QueryBinding.UUID: QueryDecodable {
-    /// Creates a UUID by decoding from the given decoder.
+
     @inlinable
     public init(decoder: inout some QueryDecoder) throws {
         guard let result = try decoder.decode(QueryBinding.UUID.self)
@@ -179,7 +163,7 @@ extension QueryBinding.UUID: QueryDecodable {
 }
 
 extension QueryDecodable where Self: LosslessStringConvertible {
-    /// Creates a value by decoding its lossless string representation from the given decoder.
+
     @inlinable
     public init(decoder: inout some QueryDecoder) throws {
         guard let losslessStringConvertible = try Self(String(decoder: &decoder))
@@ -191,7 +175,7 @@ extension QueryDecodable where Self: LosslessStringConvertible {
 }
 
 extension QueryDecodable where Self: RawRepresentable, RawValue: QueryDecodable {
-    /// Creates a value by decoding its raw value from the given decoder.
+
     @inlinable
     public init(decoder: inout some QueryDecoder) throws {
         guard let rawRepresentable = try Self(rawValue: RawValue(decoder: &decoder))
@@ -201,8 +185,6 @@ extension QueryDecodable where Self: RawRepresentable, RawValue: QueryDecodable 
         self = rawRepresentable
     }
 }
-
-// swiftlint:enable typed_throws_required
 
 @usableFromInline
 struct DataCorruptedError: Swift.Error {

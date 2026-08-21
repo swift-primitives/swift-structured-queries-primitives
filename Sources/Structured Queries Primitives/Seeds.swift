@@ -1,96 +1,27 @@
-// swiftlint:disable no_any_protocol_existential
-// REASON: SQL AST storage intentionally erases heterogeneous query and table conformers.
-
-/// A type that can prepare statements to seed a database's initial state.
 public struct Seeds: Swift.Sequence {
     let seeds: [any Table]
 
-    /// Prepares a number of batched insert statements to be executed.
-    ///
-    /// ```swift
-    /// Seeds {
-    ///   SyncUp(id: 1, seconds: 60, theme: .appOrange, title: "Design")
-    ///   SyncUp(id: 2, seconds: 60 * 10, theme: .periwinkle, title: "Engineering")
-    ///   SyncUp(id: 3, seconds: 60 * 30, theme: .poppy, title: "Product")
-    ///
-    ///   for name in ["Blob", "Blob Jr", "Blob Sr", "Blob Esq", "Blob III", "Blob I"] {
-    ///     Attendee.Draft(name: name, syncUpID: 1)
-    ///   }
-    ///   for name in ["Blob", "Blob Jr"] {
-    ///     Attendee.Draft(name: name, syncUpID: 2)
-    ///   }
-    ///   for name in ["Blob Sr", "Blob Jr"] {
-    ///     Attendee.Draft(name: name, syncUpID: 3)
-    ///   }
-    /// }
-    /// // INSERT INTO "syncUps"
-    /// //   ("id", "seconds", "theme", "title")
-    /// // VALUES
-    /// //   (1, 60, 'appOrange', 'Design'),
-    /// //   (2, 600, 'periwinkle', 'Engineering'),
-    /// //   (3, 1800, 'poppy', 'Product');
-    /// // INSERT INTO "attendees"
-    /// //   ("id", "name", "syncUpID")
-    /// // VALUES
-    /// //   (NULL, 'Blob', 1),
-    /// //   (NULL, 'Blob Jr', 1),
-    /// //   (NULL, 'Blob Sr', 1),
-    /// //   (NULL, 'Blob Esq', 1),
-    /// //   (NULL, 'Blob III', 1),
-    /// //   (NULL, 'Blob I', 1),
-    /// //   (NULL, 'Blob', 2),
-    /// //   (NULL, 'Blob Jr', 2),
-    /// //   (NULL, 'Blob Sr', 3),
-    /// //   (NULL, 'Blob Jr', 3);
-    /// ```
-    ///
-    /// And then you can iterate over each insert statement and execute it given a database
-    /// connection. For example, using the [SharingGRDB][] driver:
-    ///
-    /// ```swift
-    /// try database.write { db in
-    ///   let seeds = Seeds {
-    ///     // ...
-    ///   }
-    ///   for insert in seeds {
-    ///     try db.execute(insert)
-    ///   }
-    /// }
-    /// ```
-    ///
-    /// > Tip: [SharingGRDB][] extends GRDB's `Database` connection with a `seed` method that can
-    /// > build and insert records in a single step:
-    /// >
-    /// > ```swift
-    /// > try db.seed {
-    /// >   // ...
-    /// > }
-    /// > ```
-    ///
-    /// [SharingGRDB]: https://github.com/pointfreeco/sharing-grdb
-    ///
-    /// - Parameter build: A result builder closure that prepares statements to insert every built row.
     public init(@SeedsBuilder _ build: () -> [any Table]) {
         self.seeds = build()
     }
 }
 
 extension Seeds {
-    /// An iterator that produces batched insert statements for ``Seeds``.
+
     public struct Iterator: IteratorProtocol {
         var seeds: [any Table]
     }
 }
 
 extension Seeds {
-    /// Creates an iterator over the batched insert statements for this seed sequence.
+
     public func makeIterator() -> Iterator {
         Iterator(seeds: seeds)
     }
 }
 
 extension Seeds.Iterator {
-    /// Returns the next batched insert statement for a run of same-type seed rows.
+
     public mutating func next() -> SQLQueryExpression<Void>? {
         guard let first = seeds.first else { return nil }
 
@@ -115,60 +46,47 @@ extension Seeds.Iterator {
     }
 }
 
-/// A result builder that composes tables into a flat array for ``Seeds``.
 @resultBuilder
 public enum SeedsBuilder {
-    /// Flattens arrays of table arrays produced by a `for` loop into a single array.
+
     public static func buildArray(_ components: [[any Table]]) -> [any Table] {
         components.flatMap(\.self)
     }
 
-    /// Returns the given array of tables as the result of a builder block.
     public static func buildBlock(_ components: [any Table]) -> [any Table] {
         components
     }
 
-    /// Returns the first branch's table array in an `if`/`else` result builder block.
     public static func buildEither(first component: [any Table]) -> [any Table] {
         component
     }
 
-    /// Returns the second branch's table array in an `if`/`else` result builder block.
     public static func buildEither(second component: [any Table]) -> [any Table] {
         component
     }
 
-    /// Wraps a single table value in an array for the result builder.
     public static func buildExpression(_ expression: some Table) -> [any Table] {
         [expression]
     }
 
-    /// Returns an existing array of tables as a result builder expression.
     public static func buildExpression(_ expression: [any Table]) -> [any Table] {
         expression
     }
 
-    /// Passes through a table array component from a limited-availability branch.
     public static func buildLimitedAvailability(_ component: [any Table]) -> [any Table] {
         component
     }
 
-    // swiftlint:disable:next discouraged_optional_collection
-    /// Returns the optional table array component, or an empty array if absent.
     public static func buildOptional(_ component: [any Table]?) -> [any Table] {
         component ?? []
     }
 
-    /// Returns the first table array component of a partial result builder block.
     public static func buildPartialBlock(first: [any Table]) -> [any Table] {
         first
     }
 
-    /// Combines the accumulated table array with the next result builder component.
     public static func buildPartialBlock(accumulated: [any Table], next: [any Table]) -> [any Table]
     {
         accumulated + next
     }
 }
-
-// swiftlint:enable no_any_protocol_existential
